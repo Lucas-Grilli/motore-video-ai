@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>Il motore non sta qui dentro. Ci sta il modo di trovarlo.</strong><br>
-  Non una libreria di componenti video: la cartella che dice alla tua AI agentica dove sono il motore di rendering e la voce, e le mostra tre reel veri per farglielo capire.
+  Non una libreria di componenti video: la cartella che dice alla tua AI agentica dove sono il motore di rendering e la voce, e le mostra due reel veri per farglielo capire.
 </p>
 
 <p align="center">
@@ -26,7 +26,7 @@
 
 Hai un'AI agentica (Claude Code, Codex, o equivalente) e vuoi che ti costruisca un reel verticale: un numero che sale, un confronto tra due dati, una domanda con la risposta, magari con una voce che lo spiega. Il render sa già farlo qualcun altro — un motore per l'animazione ([HyperFrames](https://hyperframes.heygen.com/)), un servizio per la voce ([ElevenLabs](https://elevenlabs.io/)). Il problema non è il rendering: è dire alla tua AI dove sono e come si usano insieme, senza installare o incollare niente a mano.
 
-Questa cartella è quel puntatore. Non un motore, non un framework tutto suo: tre reel veri da guardare e un'unica pagina che dice all'agente cosa installare e dove guardare.
+Questa cartella è quel puntatore. Non un motore, non un framework tutto suo: due reel veri da guardare e un'unica pagina che dice all'agente cosa installare e dove guardare.
 
 ---
 
@@ -119,17 +119,16 @@ Nessun pezzo di questo repo genera un frame da solo: HyperFrames anima e renderi
 
 ## Esempi
 
-Tre reel realmente pubblicati, non demo giocattolo — codice e asset in `esempi/`, sanificati da ogni riferimento privato.
+Due reel realmente pubblicati, non demo giocattolo — codice e asset in `esempi/`, sanificati da ogni riferimento privato.
 
 | Esempio | Cosa mostra | Voce | Fonte |
 |---|---|---|---|
 | [`poltronave-caffe/`](esempi/poltronave-caffe/) | Contatore satirico che sale, scontrino animato, musica chiptune originale | No | [poltronave.it](https://poltronave.it) |
-| [`dvns-scalata-spesa-pubblica/`](esempi/dvns-scalata-spesa-pubblica/) | Un solo numero che scala lo schermo, animazione dati pura, nessun elemento di distrazione | No | [dovevannoinostrisoldi.com](https://www.dovevannoinostrisoldi.com/) |
 | [`dvns-calascio-abruzzo/`](esempi/dvns-calascio-abruzzo/) | Quiz narrato su un comune d'Abruzzo, voce ElevenLabs sincronizzata parola per parola, mappa animata | **Sì** | [dovevannoinostrisoldi.com](https://www.dovevannoinostrisoldi.com/) |
 
-**Dove Vanno I Nostri Soldi** è un sistema editoriale sui conti pubblici italiani (dati verificati, registro apartisan); il codice di questi due esempi è la loro repo, qui dentro. **Poltronave** è un contatore satirico del debito pubblico, parodia dichiarata di nyan cat — i due progetti restano separati anche qui: mai la stessa scena, mai lo stesso branding.
+**Dove Vanno I Nostri Soldi** è un sistema editoriale sui conti pubblici italiani (dati verificati, registro apartisan); il codice di questo esempio è la loro repo, qui dentro. **Poltronave** è un contatore satirico del debito pubblico, parodia dichiarata di nyan cat — i due progetti restano separati anche qui: mai la stessa scena, mai lo stesso branding.
 
-Ogni cartella ha un suo `README.md` con i comandi di rendering e cosa cambia rispetto agli altri due.
+Ogni cartella ha un suo `README.md` con i comandi di rendering e cosa cambia rispetto all'altro.
 
 ---
 
@@ -137,7 +136,7 @@ Ogni cartella ha un suo `README.md` con i comandi di rendering e cosa cambia ris
 
 - **Puntatore, non pacchetto.** HyperFrames non è vendorizzato: si installa dal suo pacchetto ufficiale (`npx hyperframes`), che porta con sé la propria documentazione sempre aggiornata. Vendorizzarlo qui vorrebbe dire congelare una versione e perdere ogni fix a monte.
 - **La chiave non è mai nel repo.** Solo variabile d'ambiente, mai in un file, un prompt o un log.
-- **Tre esempi, non uno.** Uno satirico, uno dati puri, uno con voce: coprono le tre combinazioni che contano (con/senza narrazione, registro serio/registro satira) invece di un solo caso che lascia indovinare il resto.
+- **Due esempi, non uno.** Uno satirico senza voce, uno serio con voce narrata: coprono le due variabili che contano di più (con/senza narrazione, registro serio/registro satira) invece di un solo caso che lascia indovinare il resto.
 - **Il prompt che incolli è minuscolo apposta.** Le istruzioni vere stanno in questo README, non nel prompt: così restano aggiornabili senza che tu debba ricordare o reincollare niente di nuovo.
 
 ---
