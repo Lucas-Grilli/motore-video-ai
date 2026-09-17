@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="it" data-resolution="portrait">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=1080, height=1920">
+<script src="assets/gsap.min.js"></script>
+<style>
+@font-face{font-family:Pixel;src:url('assets/pixel.ttf') format('truetype');font-weight:400;font-display:block}
+*{box-sizing:border-box}html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#070722;color:#fff;font-family:Pixel,monospace}
+#root{position:relative;width:1080px;height:1920px;overflow:hidden;background:#070722}
+.clip{position:absolute;inset:0;width:1080px;height:1920px}.star{position:absolute;background:#a9b2e9}.star.bright{background:white}
+.eyebrow{position:absolute;left:80px;top:140px;font-size:22px;line-height:1.5;color:#aab5ef;letter-spacing:2px}
+.live{display:inline-block;width:14px;height:14px;background:#6ee7a0;margin-right:15px}
+.headline{position:absolute;left:60px;top:292px;width:960px;text-align:center;font-size:66px;font-weight:400;line-height:1.5;margin:0;letter-spacing:-2px;text-shadow:6px 6px 0 #22225a}
+.headline .gold{color:#ffd447}.line{display:block}
+#craft{position:absolute;left:250px;top:800px;width:612px;height:432px}
+.sprite{position:absolute;inset:0;width:612px;height:432px;image-rendering:pixelated}
+#trail{position:absolute;right:478px;top:157px;width:1450px;height:126px;transform-origin:right center;z-index:-1}
+.stripe{height:42px;width:100%}.stripe:nth-child(1){background:#009246}.stripe:nth-child(2){background:#f1f2f1}.stripe:nth-child(3){background:#ce2b37}
+.exhaust{position:absolute;right:480px;top:157px;width:42px;height:126px;background:white}
+#ground{position:absolute;left:200px;top:1280px;width:680px;height:12px;background:#33335b}
+#ground:after{content:'';position:absolute;left:80px;right:80px;top:25px;height:5px;background:#1d1d48}
+#score{position:absolute;left:70px;top:1430px;width:940px;text-align:center}
+.score-label{color:#abb6ee;font-size:23px;line-height:1.7}.score-number{color:#ffd447;font-size:62px;line-height:1.8;text-shadow:5px 5px 0 #7e361d;margin-top:10px}
+.score-note{font-size:19px;color:#aab5ef;line-height:1.7;margin-top:12px}
+#era{position:absolute;left:95px;top:1190px;width:890px;text-align:center}
+.era-title{color:#aab5ef;font-size:21px;line-height:1.5;margin-bottom:28px}
+.era-name{font-size:34px;color:#ffd447;line-height:1.7}.era-year{font-size:24px;line-height:1.6;margin-top:12px}
+.era-slot{position:absolute;left:0;top:60px;width:890px}
+.arrow{position:absolute;top:80px;color:#6ee7a0;font-size:46px}.left{left:20px}.right{right:20px}
+#brand{position:absolute;left:50px;top:280px;width:980px;text-align:center}
+#logo{margin:0;font-size:85px;font-weight:400;letter-spacing:-4px;line-height:1.4;text-shadow:8px 8px 0 #009246,16px 16px 0 #ce2b37}
+#brandline{font-size:24px;line-height:1.9;margin-top:46px;color:#fff}
+#cta{position:absolute;left:150px;top:1380px;width:780px;height:116px;background:#ffd447;color:#070722;box-shadow:10px 10px 0 #ad7324;display:flex;align-items:center;justify-content:center;font-size:36px}
+#url{position:absolute;left:0;top:1550px;width:1080px;text-align:center;font-size:35px;color:#fff}
+#footer{position:absolute;left:70px;bottom:112px;width:940px;text-align:center;color:#aab5ef;font-size:19px;line-height:1.8}
+#flash{position:absolute;inset:0;background:#fff;opacity:0}
+
+#coffee{position:absolute;left:240px;top:720px;width:600px;height:520px;transform-origin:50% 60%}
+#coffee svg{width:600px;height:520px;overflow:visible;shape-rendering:crispEdges}
+.steam{fill:#aab5ef}.cup-fill{fill:#44261c}
+#saucer{position:absolute;left:200px;top:1270px;width:680px;height:14px;background:#aab5ef}
+#receipt{position:absolute;left:200px;top:710px;width:680px;height:840px;background:#f4edda;color:#070722;padding:55px 35px;text-align:center;clip-path:polygon(0 0,100% 0,100% 97%,95% 100%,90% 97%,85% 100%,80% 97%,75% 100%,70% 97%,65% 100%,60% 97%,55% 100%,50% 97%,45% 100%,40% 97%,35% 100%,30% 97%,25% 100%,20% 97%,15% 100%,10% 97%,5% 100%,0 97%)}
+.receipt-title{font-size:40px;line-height:1.5}.receipt-small{font-size:21px;line-height:1.8;margin-top:23px}.receipt-rule{border-top:7px dashed #070722;margin:32px 0}.receipt-label{font-size:24px;line-height:1.9}
+#receipt-value{font-size:50px;line-height:1.6;margin:22px -15px;color:#992d27}
+#receipt-status{font-size:29px;line-height:1.8;margin-top:26px;color:#992d27}
+#cta{font-size:32px}
+
+#hook{font-size:55px;top:238px;line-height:1.5}
+#debt{font-size:47px;top:245px;line-height:1.6}
+#receipt{height:700px;top:755px;padding-top:55px}
+#receipt-status{margin-top:32px;font-size:31px}
+#final-debt{position:absolute;left:60px;top:1218px;width:960px;text-align:center;opacity:0}
+#final-label{font-size:21px;line-height:1.8;color:#aab5ef}
+#final-value{font-size:45px;line-height:1.8;color:#ffd447;text-shadow:4px 4px 0 #7e361d}
+#footer{bottom:105px;font-size:18px;opacity:0}
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="15" data-width="1080" data-height="1920">
+ <div class="clip" id="space" data-start="0" data-duration="15" data-track-index="0" data-layout-ignore></div>
+ <div class="clip" id="story" data-start="0" data-duration="15" data-track-index="1">
+  <h1 class="headline" id="hook"><span class="line">TU TI FERMI</span><span class="line">PER LA</span><span class="line gold">PAUSA CAFFÈ.</span></h1>
+  <h2 class="headline" id="debt"><span class="line">INVECE</span><span class="line">IL DEBITO PUBBLICO</span><span class="line gold">NON SI FERMA MAI.</span></h2>
+  <h2 class="headline" id="governments"><span class="line">CAMBIANO</span><span class="line">I GOVERNI.</span></h2>
+  <h2 class="headline" id="chair-stays"><span class="line">IL CONTO</span><span class="line gold">RESTA APERTO.</span></h2>
+  <div id="ground"></div>
+  <div id="saucer"></div>
+  <div id="coffee"><svg viewBox="0 0 60 52" xmlns="http://www.w3.org/2000/svg" aria-label="Tazzina di espresso pixel originale">
+   <g class="steam"><path d="M18 4h3v5h-3zM15 9h3v5h-3zM18 14h3v4h-3z"/><path d="M30 1h3v5h-3zM27 6h3v5h-3zM30 11h3v5h-3z"/><path d="M41 4h3v5h-3zM38 9h3v5h-3zM41 14h3v4h-3z"/></g>
+   <path fill="#aab5ef" d="M5 44h47v3H5zM10 47h37v3H10z"/>
+   <path fill="#f4edda" d="M8 20h36v16h-4v6H14v-6H8zM44 22h10v4H44zM51 26h5v9h-5zM44 35h10v4H44z"/>
+   <path fill="#c9c1b1" d="M8 33h6v7h26v2H14v-6H8z"/>
+   <path fill="#b06b34" d="M11 21h30v6H11z"/><path class="cup-fill" d="M14 22h24v3H14z"/>
+  </svg></div>
+  <div id="craft" data-layout-ignore>
+   <div id="trail"><div class="stripe"></div><div class="stripe"></div><div class="stripe"></div></div>
+   <div class="exhaust"></div>
+   <img id="empty" class="sprite" src="assets/chair.svg" alt="Poltrona istituzionale pixel">
+   <img id="berlusconi" class="sprite" src="assets/berlusconi.svg" alt="Caricatura pixel Berlusconi">
+   <img id="monti" class="sprite" src="assets/monti.svg" alt="Caricatura pixel Monti">
+   <img id="draghi" class="sprite" src="assets/draghi.svg" alt="Caricatura pixel Draghi">
+   <img id="meloni" class="sprite" src="assets/meloni.svg" alt="Caricatura pixel Meloni">
+  </div>
+  <div id="era">
+   <div class="era-title">MACCHINA DEL TEMPO</div><div class="arrow left">&lt;</div><div class="arrow right">&gt;</div>
+   <div class="era-slot" id="era-berlusconi"><div class="era-name">BERLUSCONI II</div><div class="era-year">2001 — 2005</div></div>
+   <div class="era-slot" id="era-monti"><div class="era-name">MONTI</div><div class="era-year">2011 — 2013</div></div>
+   <div class="era-slot" id="era-draghi"><div class="era-name">DRAGHI</div><div class="era-year">2021 — 2022</div></div>
+   <div class="era-slot" id="era-meloni"><div class="era-name">MELONI</div><div class="era-year">2022 — OGGI</div></div>
+  </div>
+  <div id="score"><div class="score-label">MENTRE GUARDI QUESTO VIDEO</div><div class="score-number" id="counter">+ € 0</div></div>
+  <div id="receipt"><div class="receipt-title">CONTO ITALIA</div><div class="receipt-small">DEBITO PUBBLICO</div><div class="receipt-rule"></div><div class="receipt-label">MENTRE TU<br>FACEVI PAUSA...</div><div id="receipt-value">+ € 0</div><div class="receipt-rule"></div><div id="receipt-status">CONTO ANCORA<br>APERTO...</div></div>
+  <div id="brand"><h2 id="logo">POLTRONAVE</h2><div id="brandline">IL DEBITO PUBBLICO NON SI FERMA.<br>LA POLTRONA NEMMENO.</div></div>
+  <div id="final-debt"><div id="final-label">DEBITO PUBBLICO ITALIANO</div><div id="final-value">€ 3.235.685.085.140</div></div>
+  <div id="cta">GUARDA IL CONTO <span style="margin-left:25px">→</span></div>
+  <div id="url">poltronave.it</div>
+  <div id="footer">SATIRA · STIMA POLTRONAVE · 14/09/2026<br>BASE DATI BANCA D’ITALIA · 30/06/2026</div>
+ </div>
+ <div class="clip" id="flash" data-start="0" data-duration="15" data-track-index="4" data-layout-ignore></div>
+ <audio id="music" src="assets/tarantella-15s.wav" data-start="0" data-duration="15" data-track-index="8" data-volume="1"></audio>
+</div>
+<script>
+const tl=gsap.timeline({paused:true});
+const space=document.getElementById('space');
+// Fixed arithmetic placement: identical frames on every seek and render worker.
+for(let i=0;i<64;i++){
+ const el=document.createElement('div');el.className='star'+(i%5===0?' bright':'');
+ const x=(i*347+79)%1080,y=(i*193+53)%1920,size=i%5===0?8:4;
+ Object.assign(el.style,{left:x+'px',top:y+'px',width:size+'px',height:size+'px'});space.appendChild(el);
+ const speed=i%5===0?110:45;
+ tl.to(el,{x:-speed,duration:2,ease:'none'},0);
+ tl.to(el,{x:-1080-speed,duration:13,ease:'none'},2);
+ const copy=el.cloneNode();copy.style.left=(x+1080)+'px';space.appendChild(copy);
+ tl.to(copy,{x:-speed,duration:2,ease:'none'},0).to(copy,{x:-1080-speed,duration:13,ease:'none'},2);
+}
+gsap.set('#debt,#governments,#chair-stays,#era,#score,#brand,#cta,#url',{opacity:0});
+gsap.set('.sprite:not(#empty),.era-slot',{opacity:0});
+gsap.set('#trail',{scaleX:0});gsap.set('.exhaust',{opacity:0});
+tl.from('#hook .line',{y:35,opacity:0,stagger:0.12,duration:0.32,ease:'power3.out'},0.06);
+gsap.set('#craft',{opacity:0});
+tl.to('#craft',{opacity:1,duration:0.15},3);
+gsap.set('#ground',{opacity:0});
+tl.to('#hook',{opacity:0,y:-45,duration:0.18},2.86);
+tl.fromTo('#debt',{opacity:0,scale:1.2},{opacity:1,scale:1,duration:0.24,ease:'power3.out'},3);
+tl.set('#empty',{opacity:0},3).set('#meloni',{opacity:1},3);
+tl.to('#ground',{opacity:0,scaleX:0.5,duration:0.35},3);
+tl.to('#craft',{y:-80,x:60,duration:0.5,ease:'power2.inOut'},3);
+tl.to('#trail',{scaleX:1,duration:0.5,ease:'power3.out'},3.05);
+tl.to('#score',{opacity:1,y:-20,duration:0.35},3.2);
+tl.fromTo('.exhaust',{opacity:0.8},{opacity:0,duration:0.4,immediateRender:false},3.05);
+tl.to('#debt',{opacity:0,y:-50,duration:0.18},5.3);
+tl.fromTo('#governments',{opacity:0,y:40},{opacity:1,y:0,duration:0.3,ease:'power3.out'},5.5);
+tl.to('#era',{opacity:1,duration:0.15},5.5);
+tl.to('#craft',{scale:0.95,y:-110,x:30,duration:0.35},5.5);
+const casts=['berlusconi','monti','draghi','meloni'];
+casts.forEach((name,i)=>{
+ const t=5.5+i*0.75;
+ const previous=i===0?'meloni':casts[i-1];
+ tl.to('#'+previous,{opacity:0,duration:0.06},t-0.06);
+ if(i>0)tl.to('#era-'+previous,{opacity:0,duration:0.06},t-0.06);
+ tl.to('#'+name+',#era-'+name,{opacity:1,duration:0.06},t-0.06);
+ tl.fromTo('#era-'+name,{y:12},{y:0,duration:0.18,ease:'steps(3)'},t);
+ tl.fromTo('.exhaust',{opacity:0.8},{opacity:0,duration:0.22,immediateRender:false},t);
+});
+tl.to('#governments,#era',{opacity:0,y:-30,duration:0.2},8.3);
+tl.fromTo('#chair-stays',{opacity:0,scale:0.94},{opacity:1,scale:1,duration:0.3,ease:'back.out(1.2)'},8.5);
+tl.to('#craft',{scale:1.2,x:30,y:0,duration:0.6,ease:'power3.inOut'},8.5);
+for(let t=2.5;t<15;t+=0.5){tl.to('.sprite',{y:(Math.round(t*2)%2? -9:9),duration:0.5,ease:'sine.inOut'},t);}
+const score={value:0};tl.to(score,{value:4310*15,duration:15,ease:'none',onUpdate:()=>{document.getElementById('counter').textContent='+ € '+Math.floor(score.value).toLocaleString('it-IT');document.getElementById('receipt-value').textContent='+ € '+Math.floor(score.value).toLocaleString('it-IT');document.getElementById('final-value').textContent='€ '+Math.floor(3235685085140+score.value).toLocaleString('it-IT')}},0);
+tl.to('#chair-stays,#score',{opacity:0,y:-25,duration:0.25},10.7);
+tl.to('#craft',{scale:1,x:30,y:-20,duration:0.5,ease:'power3.inOut'},10.8);
+tl.fromTo('#brand',{opacity:0,y:65},{opacity:1,y:0,duration:0.45,ease:'power3.out'},11);
+tl.fromTo('#cta',{opacity:0,y:60},{opacity:1,y:0,duration:0.35,ease:'back.out(1.4)'},11.5);
+tl.fromTo('#url',{opacity:0,y:20},{opacity:1,y:0,duration:0.3},11.75);
+tl.to('#cta',{scale:1.035,duration:0.25,ease:'sine.inOut'},13).to('#cta',{scale:1,duration:0.25,ease:'sine.inOut'},13.25);
+
+gsap.set('#receipt',{opacity:0});
+tl.from('#coffee',{y:-50,scale:0.75,opacity:0,duration:0.4,ease:'back.out(1.5)'},0);
+tl.from('#saucer',{scaleX:0,duration:0.3},0);
+for(let i=0;i<4;i++){tl.fromTo('.steam',{y:4,opacity:0.3},{y:-10,opacity:0.9,duration:0.5,immediateRender:false},i*0.5);}
+tl.to('#coffee',{x:310,y:-320,scale:0.34,duration:0.45,ease:'power3.inOut'},3);
+tl.to('#saucer',{opacity:0,duration:0.2},3);
+tl.to('#coffee',{opacity:0,y:-370,duration:0.2},5.25);
+tl.to('#craft',{opacity:0,duration:0.2},8.35);
+tl.to('#score',{opacity:0,duration:0.2},8.35);
+tl.fromTo('#receipt',{y:700,opacity:0},{y:0,opacity:1,duration:0.4,ease:'power3.out'},8.5);
+tl.fromTo('#receipt-status',{opacity:0},{opacity:1,duration:0.1},9.25);
+tl.to('#receipt',{y:-100,opacity:0,duration:0.25},10.75);
+tl.to('#craft',{opacity:1,duration:0.35},11);
+tl.to("#footer,#final-debt",{opacity:1,duration:0.3},11.15);
+window.__timelines=window.__timelines||{};window.__timelines.main=tl;
+</script>
+</body>
+</html>

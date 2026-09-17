@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>DVNS — La scalata della spesa pubblica</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #f3f2f2; }
+      #stage {
+        position: relative;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        font-family: "Geist", Arial, sans-serif;
+        color: #201e1d;
+        background: #f3f2f2;
+      }
+
+      /* Sfondo: la cresta e' un fondale decorativo che occupa l'intero
+         canvas e puo' toccare i bordi per costruzione (falso positivo noto
+         sui margini, v. scalata-debito-pil/scheda.json) — le bandierine e
+         il ticker anno NON vivono qui: sono un livello fisso separato,
+         sempre dentro CORE_4_5, cosi' la camera puo' muoversi liberamente
+         senza mai portare un testo fuori margine (difetto mai risolto sulla
+         base Remotion). */
+      #ridge-viewport { position: absolute; inset: 0; overflow: hidden; }
+      #ridge-camera { position: absolute; top: 0; left: 0; width: 4700px; height: 3492px; transform-origin: 0 0; }
+
+      /* Schermi centrati sull'INTERO canvas (x=540), mai sulla zona sicura
+         (x=447): la restrizione al margine (64px sinistra, 250px destra)
+         viene dal max-width dei blocchi interni, mai dallo spostare l'asse
+         — regola in flusso-standard.md, sezione Montaggio. */
+      .schermo {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1080px;
+        height: 1920px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .box { max-width: 560px; min-width: 0; }
+      .kicker {
+        font-weight: 700;
+        letter-spacing: 0.10em;
+        text-transform: uppercase;
+        color: #6f6a67;
+        line-height: 1.2;
+      }
+      .num { font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+
+      #hook { top: 700px; justify-content: flex-start; opacity: 0; }
+      #hook .box { font-size: 54px; font-weight: 800; line-height: 1.22; letter-spacing: -0.02em; }
+
+      #anno { position: absolute; right: 64px; top: 336px; text-align: right; opacity: 0; }
+      #anno .num { font-size: 108px; color: #201e1d; }
+
+      .flagcard { top: 500px; justify-content: flex-start; opacity: 0; }
+      /* Cartellino opaco: la cresta scorre sotto e puo' passare esattamente
+         dietro il testo (successo su 2023/2024, i punti piu' alti) — un
+         fondo pieno stacca sempre il testo dalla riga rossa, qualunque sia
+         la posizione della camera in quel momento. */
+      .cartellino {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        background: #f3f2f2;
+        padding: 22px 36px;
+      }
+      .flagcard .kicker { font-size: 34px; }
+      .flagcard .valore { font-size: 74px; font-weight: 800; margin-top: 10px; line-height: 1; }
+
+      #chiusura { justify-content: center; opacity: 0; }
+      #c-pct { font-size: 190px; font-weight: 800; color: #ec3013; line-height: 1; opacity: 0; }
+      #c-sub { font-size: 50px; font-weight: 700; margin-top: 14px; opacity: 0; }
+      #c-pil { margin-top: 58px; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; }
+      #c-pil .riga1 { font-size: 36px; font-weight: 600; color: #201e1d; }
+      #c-pil .riga2 { font-size: 46px; font-weight: 800; color: #201e1d; }
+      #c-logo { margin-top: 76px; opacity: 0; }
+      #c-url { font-size: 42px; font-weight: 800; margin-top: 16px; opacity: 0; }
+
+      #fonte {
+        position: absolute;
+        left: 64px;
+        top: 1556px;
+        width: 766px;
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 1.35;
+        color: #6f6a67;
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="stage"
+      data-composition-id="scalata-spesa-pubblica"
+      data-start="0"
+      data-duration="24.0"
+      data-fps="30"
+      data-width="1080"
+      data-height="1920"
+    >
+      <!-- Mondo: cresta + ticker anno + bandierine (0-19.3ca) -->
+      <div id="mondo" class="schermo" style="align-items: stretch;">
+        <div id="ridge-viewport" data-layout-allow-overflow="true">
+          <div id="ridge-camera">
+            <svg viewBox="0 0 4700 3492" width="4700" height="3492" aria-hidden="true">
+              <polygon
+                points="0,2900 300,2900 600,2860 900,2865 1200,2760 1500,2707 1800,2611 2100,2120 2400,1567 2700,1139 3000,800 3300,1062 4700,1062 4700,3492 0,3492"
+                fill="#eae9e9"
+              />
+              <polyline
+                points="0,2900 300,2900 600,2860 900,2865 1200,2760 1500,2707 1800,2611 2100,2120 2400,1567 2700,1139 3000,800 3300,1062 4700,1062"
+                fill="none"
+                stroke="#ec3013"
+                stroke-width="10"
+                stroke-linejoin="round"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Schermo 1: hook, domanda sempre a schermo anche senza voce -->
+        <div id="hook" class="schermo">
+          <div class="box">Quanto è cresciuta la spesa pubblica in dieci anni?</div>
+        </div>
+
+        <div id="anno"><div id="anno-num" class="num">2014</div></div>
+
+        <div id="flag-2014" class="schermo flagcard">
+          <div class="cartellino">
+            <div class="kicker">2014</div>
+            <div class="valore">830 mld</div>
+          </div>
+        </div>
+        <div id="flag-2020" class="schermo flagcard">
+          <div class="cartellino">
+            <div class="kicker" style="color: #ec3013;">2020 · COVID</div>
+          </div>
+        </div>
+        <div id="flag-2023" class="schermo flagcard">
+          <div class="cartellino">
+            <div class="kicker">2023 · PICCO</div>
+            <div class="valore" style="color: #ec3013;">1.149 mld</div>
+          </div>
+        </div>
+        <div id="flag-2024" class="schermo flagcard">
+          <div class="cartellino">
+            <div class="kicker">2024</div>
+            <div class="valore">1.109 mld</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Schermo finale: chiusura, +34% e contesto quota PIL -->
+      <div id="chiusura" class="schermo">
+        <div id="c-pct">+34%</div>
+        <div id="c-sub">in dieci anni</div>
+        <div id="c-pil">
+          <div class="riga1">Sul PIL, quasi invariata</div>
+          <div class="riga2">50,7% → 50,4%</div>
+        </div>
+        <img id="c-logo" src="assets/logo-transparent.png" width="150" height="150" alt="" />
+        <div id="c-url">dovevannoinostrisoldi.com</div>
+      </div>
+
+      <div id="fonte">
+        <div>Fonte: Eurostat, COFOG — spesa totale AP, Italia 2014-2024</div>
+        <div>Elaborazione: dovevannoinostrisoldi.com</div>
+      </div>
+    </div>
+
+    <script>
+      document.fonts.ready.then(() => {
+        const tl = gsap.timeline({ paused: true });
+
+        // ---- posizioni camera (scala costante 0.55, solo pan orizzontale:
+        // niente zoom, per non dover coprire il frame a piu' altezze
+        // virtuali. target_x = x_schermo - x_virtuale*scala, calcolato a
+        // mano per tenere ogni bandierina dentro CORE_4_5 senza mai
+        // derivarla dalla posizione della camera. ----
+        const X = { p2014: -15, p2020: -755, p2023: -1250, p2024: -1415 };
+
+        const T = {
+          hookIn: 0.0, hookOut: 1.85,
+          flag2014In: 2.15, flag2014Out: 3.65,
+          travel1: [3.65, 7.25],
+          flag2020In: 7.25, flag2020Out: 8.75,
+          travel2: [8.75, 12.35],
+          flag2023In: 12.35, flag2023Out: 13.85,
+          travel3: [13.85, 17.45],
+          flag2024In: 17.45, flag2024Out: 18.95,
+          mondoOut: 19.0,
+          closingIn: 19.3,
+        };
+
+        function fadeCard(id, inAt, outAt) {
+          tl.to(id, { opacity: 1, duration: 0.3, ease: "power2.out" }, inAt);
+          if (outAt !== undefined) {
+            tl.to(id, { opacity: 0, duration: 0.3, ease: "power2.in" }, outAt);
+          }
+        }
+
+        // Camera: ferma su 2014 dall'inizio (il "mondo" e' gia' visibile
+        // sotto l'hook), poi tre viaggi verso i punti successivi.
+        tl.set("#ridge-camera", { x: X.p2014, scale: 0.55 }, 0);
+        tl.to("#ridge-camera", { x: X.p2020, duration: T.travel1[1] - T.travel1[0], ease: "power1.inOut" }, T.travel1[0]);
+        tl.to("#ridge-camera", { x: X.p2023, duration: T.travel2[1] - T.travel2[0], ease: "power1.inOut" }, T.travel2[0]);
+        tl.to("#ridge-camera", { x: X.p2024, duration: T.travel3[1] - T.travel3[0], ease: "power1.inOut" }, T.travel3[0]);
+
+        // Ticker anno: appare con il primo fermo, conta durante i viaggi.
+        fadeCard("#anno", T.hookOut, undefined);
+        const annoEl = document.getElementById("anno-num");
+        function countYear(from, to, start, end) {
+          const obj = { y: from };
+          tl.to(obj, {
+            y: to,
+            duration: end - start,
+            ease: "none",
+            onUpdate: () => { annoEl.textContent = String(Math.round(obj.y)); },
+          }, start);
+        }
+        countYear(2014, 2020, T.travel1[0], T.travel1[1]);
+        countYear(2020, 2023, T.travel2[0], T.travel2[1]);
+        countYear(2023, 2024, T.travel3[0], T.travel3[1]);
+
+        // Hook e bandierine
+        fadeCard("#hook", T.hookIn, T.hookOut);
+        fadeCard("#flag-2014", T.flag2014In, T.flag2014Out);
+        fadeCard("#flag-2020", T.flag2020In, T.flag2020Out);
+        fadeCard("#flag-2023", T.flag2023In, T.flag2023Out);
+        fadeCard("#flag-2024", T.flag2024In, T.flag2024Out);
+
+        // Uscita mondo, ingresso chiusura
+        tl.to("#mondo", { opacity: 0, duration: 0.3, ease: "power2.in" }, T.mondoOut);
+        tl.set("#chiusura", { opacity: 1 }, T.closingIn);
+        tl.fromTo("#c-pct", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" }, T.closingIn);
+        tl.to("#c-sub", { opacity: 1, duration: 0.3, ease: "power2.out" }, T.closingIn + 0.6);
+        tl.to("#c-pil", { opacity: 1, duration: 0.3, ease: "power2.out" }, T.closingIn + 1.2);
+        tl.to("#c-logo", { opacity: 1, duration: 0.3, ease: "power2.out" }, T.closingIn + 2.0);
+        tl.to("#c-url", { opacity: 1, duration: 0.3, ease: "power2.out" }, T.closingIn + 2.2);
+        tl.to("#fonte", { opacity: 1, duration: 0.3, ease: "power2.out" }, T.closingIn + 2.3);
+
+        window.__timelines["scalata-spesa-pubblica"] = tl;
+      });
+    </script>
+  </body>
+</html>

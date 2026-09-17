@@ -1,0 +1,33 @@
+const fs=require('node:fs');
+const vm=require('node:vm');
+const path=require('node:path');
+const root=__dirname;
+const ctx={};vm.runInNewContext(fs.readFileSync(path.join(root,'live-eras.js'),'utf8'),ctx);
+const era=ctx.POLTRONAVE_ERAS.find(e=>e.id==='oggi');
+// Snapshot from the site's live code; frozen in the composition, never a render-time clock.
+const snapshotAt='2026-09-14T08:48:14.000Z';
+const debt=Math.floor(era.base+era.rate*((Date.parse(snapshotAt)-era.dataTs)/1000));
+fs.writeFileSync(path.join(root,'debt-snapshot.json'),JSON.stringify({snapshotAt,source:'https://poltronave.it/eras.js',methodSource:'https://poltronave.it/app.js',base:era.base,rate:era.rate,dataTs:new Date(era.dataTs).toISOString(),value:debt,display:debt.toLocaleString('it-IT')},null,2));
+let h=fs.readFileSync(path.join(root,'../lancio-v2-caffe-2026-09-11/index.html'),'utf8');
+h=h.replace(/  <div class="eyebrow">.*?<\/div>\r?\n/,'');
+h=h.replace(/<h1 class="headline" id="hook">.*?<\/h1>/,'<h1 class="headline" id="hook"><span class="line">TU TI FERMI</span><span class="line">PER LA</span><span class="line gold">PAUSA CAFFÈ.</span></h1>');
+h=h.replace(/<h2 class="headline" id="debt">.*?<\/h2>/,'<h2 class="headline" id="debt"><span class="line">INVECE</span><span class="line">IL DEBITO PUBBLICO</span><span class="line gold">NON SI FERMA MAI.</span></h2>');
+h=h.replace(/<div class="score-note">.*?<\/div>/,'');
+h=h.replace('<div class="receipt-small">STIMA: + € 4.310 / SEC.<br>BASE: 30 GIUGNO 2026<br>DATI BANCA D’ITALIA</div>','');
+h=h.replace('  <div id="cta">',`  <div id="final-debt"><div id="final-label">DEBITO PUBBLICO ITALIANO</div><div id="final-value">€ ${debt.toLocaleString('it-IT')}</div></div>\n  <div id="cta">`);
+h=h.replace('<div id="footer">SATIRA · STIMA SU DATI BANCA D’ITALIA</div>','<div id="footer">SATIRA · STIMA POLTRONAVE · 14/09/2026<br>BASE DATI BANCA D’ITALIA · 30/06/2026</div>');
+h=h.replace('</style>',`\n#hook{font-size:55px;top:238px;line-height:1.5}\n#debt{font-size:47px;top:245px;line-height:1.6}\n#receipt{height:700px;top:755px;padding-top:55px}\n#receipt-status{margin-top:32px;font-size:31px}\n#final-debt{position:absolute;left:60px;top:1218px;width:960px;text-align:center;opacity:0}\n#final-label{font-size:21px;line-height:1.8;color:#aab5ef}\n#final-value{font-size:45px;line-height:1.8;color:#ffd447;text-shadow:4px 4px 0 #7e361d}\n#footer{bottom:105px;font-size:18px;opacity:0}\n</style>`);
+// Longer opening to read the requested copy. Keep the 15-second end card and receipt window.
+h=h.replace("},1.86);","},2.86);");
+h=h.replace(/^(tl\.(?:to|fromTo|set).*?),2\);$/gm,'$1,3);');
+h=h.replace("},2).set(","},3).set(");
+h=h.replace(/,2\.05\);/g,',3.05);').replace(/,2\.2\);/g,',3.2);');
+h=h.replace(/,4\.3\);/g,',5.3);').replace(/,4\.5\);/g,',5.5);');
+h=h.replace('const t=4.5+i;','const t=5.5+i*0.75;');
+h=h.replace("},4.25);","},5.25);");
+h=h.replace("tl.to('#chair-stays,#score,.eyebrow'","tl.to('#chair-stays,#score'");
+h=h.replace('window.__timelines=','tl.to("#footer,#final-debt",{opacity:1,duration:0.3},11.15);\nwindow.__timelines=');
+h=h.replace("document.getElementById('receipt-value').textContent='+ € '+Math.floor(score.value).toLocaleString('it-IT')",`document.getElementById('receipt-value').textContent='+ € '+Math.floor(score.value).toLocaleString('it-IT');document.getElementById('final-value').textContent='€ '+Math.floor(${debt}+score.value).toLocaleString('it-IT')`);
+fs.writeFileSync(path.join(root,'index.html'),h);
+fs.writeFileSync(path.join(root,'meta.json'),JSON.stringify({id:'poltronave-caffe-v3',name:'Poltronave — Pausa caffè, versione pulita'},null,2));
+console.log('Frozen site estimate:',debt.toLocaleString('it-IT'),'at',snapshotAt);
