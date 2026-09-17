@@ -6,12 +6,12 @@
 
 <p align="center">
   <strong>E se la tua AI sapesse già come si fa un video?</strong><br>
-  Le dai un'idea o un dato. Lei sa già dove prendere il motore per animarlo e la voce per raccontarlo. Due reel veri, già pubblicati, mostrano come.
+  Le dai un'idea, un link o un dato: il video lo monta lei, zero software da aprire, zero codice da scrivere. Due reel veri, già pubblicati, sono usciti così.
 </p>
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/licenza-MIT-CA632B.svg" alt="Licenza MIT"></a>
-  <img src="https://img.shields.io/badge/versione-0.3-CA632B.svg" alt="Versione 0.3">
+  <img src="https://img.shields.io/badge/versione-0.4-CA632B.svg" alt="Versione 0.4">
   <img src="https://img.shields.io/badge/lingua-italiano-CA632B.svg" alt="In italiano">
 </p>
 
@@ -23,7 +23,7 @@
   <a href="#cosa-non-fa">Cosa non fa</a>
 </p>
 
-Hai un'AI agentica (Claude Code, Codex, o equivalente) e vuoi che ti costruisca un video: un numero che sale, un confronto tra due dati, una domanda con la risposta, magari con una voce che lo spiega. Verticale, orizzontale, quadrato: il formato lo decidi tu.
+Hai un'AI agentica (Claude Code, Codex, o equivalente) e vuoi un video: zero software da aprire, zero codice da scrivere, il montaggio lo fa lei. Un numero che sale, un confronto tra due dati, una domanda con la risposta, magari con una voce che lo spiega. Verticale, orizzontale, quadrato: il formato lo decidi tu.
 
 Il render sa già farlo qualcun altro. Un motore per l'animazione, gli effetti sonori e la musica ([HyperFrames](https://hyperframes.heygen.com/)), un servizio per la voce ([ElevenLabs](https://elevenlabs.io/)). Il problema non è il rendering: è dire alla tua AI dove sono e come si usano insieme, senza installare o incollare niente a mano.
 
@@ -127,12 +127,16 @@ Due reel realmente pubblicati, non demo giocattolo. Codice e asset in `esempi/`,
 <td align="center" width="50%">
 <img src="esempi/poltronave-caffe/output/preview.gif" width="220" alt="Anteprima Poltronave, Caffè V3"><br>
 <b>Poltronave · Caffè V3</b><br>satira, no voce<br>
-<sub><a href="esempi/poltronave-caffe/output/poltronave-caffe-v3-15s.mp4">🔊 versione con audio</a></sub>
+<sub><a href="esempi/poltronave-caffe/output/poltronave-caffe-v3-15s.mp4">🔊 versione con audio</a></sub><br><br>
+<sub>Il prompt che ho usato:<br>«Guarda poltronave.it e fammi un video di lancio per i social, verticale, 15 secondi. Storytelling, mi raccomando.»</sub><br>
+<sub><a href="https://poltronave.it">poltronave.it ↗</a></sub>
 </td>
 <td align="center" width="50%">
 <img src="esempi/dvns-calascio-abruzzo/output/preview.gif" width="220" alt="Anteprima DVNS, Calascio in Abruzzo"><br>
 <b>DVNS · Calascio, Abruzzo</b><br>quiz narrato, con voce<br>
-<sub><a href="esempi/dvns-calascio-abruzzo/output/calascio-master-v5.mp4">🔊 versione con audio</a></sub>
+<sub><a href="esempi/dvns-calascio-abruzzo/output/calascio-master-v5.mp4">🔊 versione con audio</a></sub><br><br>
+<sub>Flusso automatico che uso per i video di Dove Vanno I Nostri Soldi:</sub><br>
+<sub><a href="https://x.com/DVNSoldi">@DVNSoldi ↗</a></sub>
 </td>
 </tr>
 </table>
