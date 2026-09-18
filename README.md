@@ -11,7 +11,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/licenza-MIT-CA632B.svg" alt="Licenza MIT"></a>
-  <img src="https://img.shields.io/badge/versione-0.4-CA632B.svg" alt="Versione 0.4">
+  <img src="https://img.shields.io/badge/versione-0.5-CA632B.svg" alt="Versione 0.5">
   <img src="https://img.shields.io/badge/lingua-italiano-CA632B.svg" alt="In italiano">
 </p>
 
@@ -33,7 +33,7 @@ Questa cartella è quel puntatore. Due reel veri da guardare, e un'unica pagina 
 
 ## Guarda la demo in azione
 
-> 🎬 *Demo video in arrivo. Nel frattempo, gli [esempi](#esempi) qui sotto sono reel reali, già online.*
+[![Guarda la demo](https://i.ytimg.com/vi/EVaiAJasAA0/maxresdefault.jpg)](https://www.youtube.com/watch?v=EVaiAJasAA0)
 
 ---
 
