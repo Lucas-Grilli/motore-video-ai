@@ -6,12 +6,12 @@
 
 <p align="center">
   <strong>E se la tua AI sapesse già come si fa un video?</strong><br>
-  Le dai un'idea, un link o un dato: il video lo monta lei, zero software da aprire, zero codice da scrivere. Due reel veri, già pubblicati, sono usciti così.
+  Le dai un'idea, un link o un dato: il video lo monta lei, zero software da aprire, zero codice da scrivere. Tre video veri, già pubblicati, sono usciti così.
 </p>
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/licenza-MIT-CA632B.svg" alt="Licenza MIT"></a>
-  <img src="https://img.shields.io/badge/versione-0.5-CA632B.svg" alt="Versione 0.5">
+  <img src="https://img.shields.io/badge/versione-0.6-CA632B.svg" alt="Versione 0.6">
   <img src="https://img.shields.io/badge/lingua-italiano-CA632B.svg" alt="In italiano">
 </p>
 
@@ -23,11 +23,16 @@
   <a href="#cosa-non-fa">Cosa non fa</a>
 </p>
 
+<p align="center">
+  <a href="assets/motore-video-ai.mp4"><img src="assets/motore-video-ai.gif" width="100%" alt="motore-video-ai: dal prompt ai tre video veri"></a><br>
+  <sub>Anche questo video di 26 secondi è uscito da questa cartella. <a href="assets/motore-video-ai.mp4">🔊 Versione con audio</a></sub>
+</p>
+
 Hai un'AI agentica (Claude Code, Codex, o equivalente) e vuoi un video: zero software da aprire, zero codice da scrivere, il montaggio lo fa lei. Un numero che sale, un confronto tra due dati, una domanda con la risposta, magari con una voce che lo spiega. Verticale, orizzontale, quadrato: il formato lo decidi tu.
 
 Il render sa già farlo qualcun altro. Un motore per l'animazione, gli effetti sonori e la musica ([HyperFrames](https://hyperframes.heygen.com/)), un servizio per la voce ([ElevenLabs](https://elevenlabs.io/)). Il problema non è il rendering: è dire alla tua AI dove sono e come si usano insieme, senza installare o incollare niente a mano.
 
-Questa cartella è quel puntatore. Due reel veri da guardare, e un'unica pagina che dice all'agente cosa installare e dove guardare.
+Questa cartella è quel puntatore. Tre video veri da guardare, e un'unica pagina che dice all'agente cosa installare e dove guardare.
 
 ---
 
@@ -77,7 +82,7 @@ Scarica lo zip di https://github.com/Lucas-Grilli/motore-video-ai (branch main) 
    export ELEVENLABS_API_KEY="..."   # macOS/Linux
    $env:ELEVENLABS_API_KEY = "..."   # Windows PowerShell
    ```
-   Se manca, chiedila all'utente invece di inventare o saltare il passo. Modello consigliato: `eleven_multilingual_v2`.
+   Se manca, chiedila all'utente invece di inventare o saltare il passo. Modello consigliato: `eleven_multilingual_v2`. Se la voce la registra l'utente, la chiave non serve: segui `esempi/superpino-lancio/README.md`, sezione "Rifallo con la tua voce".
 4. **Guarda gli [esempi](#esempi)** prima di scrivere la tua composizione: mostrano struttura file, timing (`data-start`, `class="clip"`) e come si integra la voce quando c'è.
 5. **Solo ora chiedi all'utente cosa vuole costruire**: argomento, formato, durata indicativa, se serve voce o no.
 6. **Se qualcosa va ritoccato a mano dopo**, HyperFrames porta con sé un editor visivo (vedi [Le scelte](#le-scelte-che-lo-tengono-in-piedi)). Resta un extra: la maggior parte delle volte non serve.
@@ -120,23 +125,30 @@ Nessun pezzo di questo repo genera un frame da solo. HyperFrames anima e mixa au
 
 ## Esempi
 
-Due reel realmente pubblicati, non demo giocattolo. Codice e asset in `esempi/`, sanificati da ogni riferimento privato. Entrambi hanno musica ed effetti sonori sincronizzati, non solo grafica.
+Tre video realmente pubblicati, non demo giocattolo. Codice e asset in `esempi/`, sanificati da ogni riferimento privato. Tutti hanno musica ed effetti sonori sincronizzati, non solo grafica.
 
 <table>
 <tr>
-<td align="center" width="50%">
+<td align="center" width="33%">
 <img src="esempi/poltronave-caffe/output/preview.gif" width="220" alt="Anteprima Poltronave, Caffè V3"><br>
 <b>Poltronave · Caffè V3</b><br>satira, no voce<br>
 <sub><a href="esempi/poltronave-caffe/output/poltronave-caffe-v3-15s.mp4">🔊 versione con audio</a></sub><br><br>
 <sub>Il prompt che ho usato:<br>«Guarda poltronave.it e fammi un video di lancio per i social, verticale, 15 secondi. Storytelling, mi raccomando.»</sub><br>
 <sub><a href="https://poltronave.it">poltronave.it ↗</a></sub>
 </td>
-<td align="center" width="50%">
+<td align="center" width="33%">
 <img src="esempi/dvns-calascio-abruzzo/output/preview.gif" width="220" alt="Anteprima DVNS, Calascio in Abruzzo"><br>
 <b>DVNS · Calascio, Abruzzo</b><br>quiz narrato, con voce<br>
 <sub><a href="esempi/dvns-calascio-abruzzo/output/calascio-master-v5.mp4">🔊 versione con audio</a></sub><br><br>
 <sub>Flusso automatico che uso per i video di Dove Vanno I Nostri Soldi:</sub><br>
 <sub><a href="https://x.com/DVNSoldi">@DVNSoldi ↗</a></sub>
+</td>
+<td align="center" width="33%">
+<img src="esempi/superpino-lancio/output/preview.gif" width="300" alt="Anteprima del lancio SuperPino"><br>
+<b>SuperPino · lancio</b><br>voce registrata, 79 s<br>
+<sub><a href="esempi/superpino-lancio/output/superpino-lancio.mp4">🔊 versione con audio</a></sub><br><br>
+<sub>Il brief: il testo registrato al telefono e «super figo, quick & cool», come un lancio Apple.</sub><br>
+<sub><a href="https://italiaaperta.it">italiaaperta.it ↗</a></sub>
 </td>
 </tr>
 </table>
@@ -144,11 +156,12 @@ Due reel realmente pubblicati, non demo giocattolo. Codice e asset in `esempi/`,
 | Esempio | Cosa mostra | Voce | Fonte |
 |---|---|---|---|
 | [`poltronave-caffe/`](esempi/poltronave-caffe/) | Contatore satirico che sale, scontrino animato, musica chiptune originale | No | [poltronave.it](https://poltronave.it) |
-| [`dvns-calascio-abruzzo/`](esempi/dvns-calascio-abruzzo/) | Quiz narrato su un comune d'Abruzzo, voce ElevenLabs sincronizzata parola per parola, mappa animata | **Sì** | [dovevannoinostrisoldi.com](https://www.dovevannoinostrisoldi.com/) |
+| [`dvns-calascio-abruzzo/`](esempi/dvns-calascio-abruzzo/) | Quiz narrato su un comune d'Abruzzo, voce ElevenLabs sincronizzata parola per parola, mappa animata | **Sì**, generata | [dovevannoinostrisoldi.com](https://www.dovevannoinostrisoldi.com/) |
+| [`superpino-lancio/`](esempi/superpino-lancio/) | Lancio di un servizio: voce di una persona vera, scene agganciate alle parole, sottotitoli, illustrazioni in codice; script per rifarlo con la tua voce | **Sì**, registrata | [italiaaperta.it](https://italiaaperta.it) |
 
-**Dove Vanno I Nostri Soldi** è un sistema editoriale sui conti pubblici italiani, dati verificati, registro apartisan. Il codice di questo esempio è la loro repo, qui dentro. **Poltronave** è un contatore satirico del debito pubblico, parodia dichiarata di nyan cat. I due progetti restano separati anche qui: mai la stessa scena, mai lo stesso branding.
+**Dove Vanno I Nostri Soldi** è un sistema editoriale sui conti pubblici italiani, dati verificati, registro apartisan. Il codice di questo esempio è la loro repo, qui dentro. **Poltronave** è un contatore satirico del debito pubblico, parodia dichiarata di nyan cat. I due progetti restano separati anche qui: mai la stessa scena, mai lo stesso branding. **SuperPino** è l'assistente di ItaliaAperta che prepara le segnalazioni al Comune: il video è quello del suo lancio.
 
-Ogni cartella ha un suo `README.md` con i comandi di rendering. Entrambi sono verticali 9:16 per scelta editoriale di chi li ha pubblicati, non per un vincolo del motore.
+Ogni cartella ha un suo `README.md` con i comandi di rendering. Poltronave e DVNS sono verticali 9:16, SuperPino è orizzontale 16:9: il formato è una scelta di chi pubblica, non un vincolo del motore.
 
 ---
 
@@ -156,7 +169,7 @@ Ogni cartella ha un suo `README.md` con i comandi di rendering. Entrambi sono ve
 
 - **Puntatore, non pacchetto.** HyperFrames non è vendorizzato: si installa dal suo pacchetto ufficiale (`npx hyperframes`), che porta con sé la propria documentazione sempre aggiornata. Vendorizzarlo qui vorrebbe dire congelare una versione e perdere ogni fix a monte.
 - **La chiave non è mai nel repo.** Solo variabile d'ambiente, mai in un file, un prompt o un log.
-- **Due esempi, non uno.** Uno satirico senza voce, uno serio con voce narrata: coprono le due combinazioni che contano di più.
+- **Tre esempi, tre modi di usare la voce.** Uno senza voce, uno con la voce generata, uno con la voce registrata di una persona: sono i tre casi che capitano davvero.
 - **Il prompt che incolli è minuscolo apposta.** Le istruzioni vere stanno in questo README, non nel prompt, così restano aggiornabili senza che tu debba ricordare o reincollare niente di nuovo.
 - **C'è anche un editor visivo**, se ti serve. HyperFrames porta con sé uno Studio locale (canvas, timeline, layer, inspector: `npx hyperframes preview --background`), dove puoi selezionare un elemento e descrivere la correzione invece di riscrivere codice. Guardare non consuma un token: il costo entra solo quando chiedi davvero una modifica. Resta un di più: la maggior parte delle volte l'agente finisce senza bisogno di aprirlo.
 
@@ -164,19 +177,19 @@ Ogni cartella ha un suo `README.md` con i comandi di rendering. Entrambi sono ve
 
 ## Cosa non fa
 
-Non genera voci (le genera ElevenLabs, con una chiave tua) e non decide il contenuto: dato, angolo e copione restano una scelta di chi lo usa.
+Non genera voci (le genera ElevenLabs con una chiave tua, oppure registri la tua) e non decide il contenuto: dato, angolo e copione restano una scelta di chi lo usa.
 
 ---
 
 ## Crediti
 
-Il motore di rendering è [HyperFrames](https://hyperframes.heygen.com/) (HeyGen); la voce è [ElevenLabs](https://elevenlabs.io/). Gli esempi includono [GSAP](https://gsap.com/) (GreenSock, gratuito) per l'animazione e il font [Geist](https://vercel.com/font) (Vercel, SIL Open Font License).
+Il motore di rendering è [HyperFrames](https://hyperframes.heygen.com/) (HeyGen); la voce è [ElevenLabs](https://elevenlabs.io/). Gli esempi includono [GSAP](https://gsap.com/) (GreenSock, gratuito) per l'animazione, i font [Geist](https://vercel.com/font) (Vercel) e [Inter](https://rsms.me/inter/), entrambi SIL Open Font License, e per la voce registrata la trascrizione locale di [faster-whisper](https://github.com/SYSTRAN/faster-whisper).
 
 ---
 
 ## Licenza
 
-MIT, vedi [LICENSE](LICENSE). Il codice è libero; gli esempi restano soggetti alle regole dei rispettivi progetti se li riusi come contenuto (satira dichiarata per Poltronave, dato verificato e apartisan per DVNS), non se li guardi solo come codice.
+MIT, vedi [LICENSE](LICENSE). Il codice è libero; gli esempi restano soggetti alle regole dei rispettivi progetti se li riusi come contenuto (satira dichiarata per Poltronave, dato verificato e apartisan per DVNS; nome, marchio e illustrazioni di SuperPino restano di ItaliaAperta), non se li guardi solo come codice.
 
 ---
 

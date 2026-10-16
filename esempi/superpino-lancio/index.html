@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1920, height=1080" />
+<script src="assets/gsap.min.js"></script>
+<script src="assets/cues.js"></script>
+<script src="assets/captions.js"></script>
+<style>
+  @font-face { font-family: 'IN'; src: url(assets/inter-600.woff2) format('woff2'); font-weight: 600; }
+  @font-face { font-family: 'IN'; src: url(assets/inter-400.woff2) format('woff2'); font-weight: 400; }
+  :root { --bg:#f6f7f4; --ink:#13221f; --muted:#56625d; --line:#dde2dc; --green:#17483c; --green2:#1f6b50; --navy:#283b84; --navy2:#3a55a4; --sun:#f0ce6a; --clay:#c0583e; --sand:#b38a2e; --stone:#eceee9; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); }
+  #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); font-family: 'IN', sans-serif; color: var(--ink); }
+  .full { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+  .abs { position: absolute; }
+  .sc { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; }
+  .serif { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; letter-spacing: -.035em; white-space: nowrap; }
+  .c { left: 0; width: 1920px; text-align: center; }
+  #dots { background: radial-gradient(#13221f17 1.6px, transparent 2.2px) 0 0 / 30px 30px; }
+  .card { position: absolute; background: #fff; border-radius: 56px; box-shadow: 0 30px 0 -12px #13221f10, 0 40px 90px #13221f1a; }
+  .roll { display: flex; justify-content: center; }
+  .roll .col { position: relative; overflow: hidden; } .roll .strip { display: flex; flex-direction: column; }
+  .roll .plus { color: var(--clay); }
+
+  /* S2 finestra */
+  #win { left: 260px; top: 150px; width: 1400px; height: 800px; border-radius: 56px; background: #fff; box-shadow: 0 40px 0 -10px #13221f12, 0 40px 90px #13221f1c; overflow: hidden; }
+  #win .top { position: absolute; left: 0; top: 0; width: 100%; height: 190px; background: var(--green); }
+  #win .dot { position: absolute; top: 40px; width: 26px; height: 26px; border-radius: 50%; background: #ffffff55; }
+  #win .addr { position: absolute; left: 70px; top: 86px; width: 1260px; height: 80px; border-radius: 40px; background: #fff; }
+  #win .body { position: absolute; left: 0; top: 190px; width: 100%; height: 610px; background: radial-gradient(#13221f12 1.6px, transparent 2.2px) 0 0 / 30px 30px; }
+  #win .t { position: absolute; left: 0; top: 215px; width: 100%; text-align: center; font-size: 122px; line-height: 150px; }
+  .k { display: inline-block; }
+
+  .sheet { position: absolute; width: 150px; height: 190px; border-radius: 14px; background: #fff; box-shadow: 0 10px 24px #13221f1f; }
+  .sheet i { position: absolute; left: 22px; height: 10px; border-radius: 5px; background: #dde2dc; }
+  .tile { position: absolute; width: 54px; height: 54px; border-radius: 12px; background: #e3e7e1; }
+  .tile::before { content: ''; position: absolute; left: 0; top: -7px; width: 24px; height: 10px; border-radius: 5px 5px 0 0; background: inherit; }
+  .bub { position: absolute; width: 96px; height: 96px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 12px 26px #13221f26; }
+  .mun { position: absolute; width: 40px; height: 40px; }
+  .board { position: absolute; height: 160px; padding: 0 80px 0 56px; border-radius: 24px; color: #fff; font-size: 104px; line-height: 160px; clip-path: polygon(0 0, calc(100% - 52px) 0, 100% 50%, calc(100% - 52px) 100%, 0 100%); }
+  .board.l { padding: 0 56px 0 80px; clip-path: polygon(52px 0, 100% 0, 100% 100%, 52px 100%, 0 50%); }
+
+  /* telefono */
+  #phone { left: 1180px; top: 120px; width: 600px; height: 1080px; border-radius: 86px; background: #13221f; padding: 18px; box-shadow: 0 50px 100px #13221f40; }
+  #phone .scr { position: relative; width: 100%; height: 100%; border-radius: 70px; background: #fff; overflow: hidden; }
+  #phone .hd { position: absolute; left: 0; top: 0; width: 100%; height: 120px; display: flex; align-items: center; gap: 16px; padding: 30px 0 0 40px; font-size: 34px; font-weight: 600; color: var(--navy); }
+  #cam { position: absolute; left: 30px; top: 130px; width: 504px; height: 470px; border-radius: 34px; background: url(assets/buca.jpg) center/cover; }
+  #cam .cn { position: absolute; width: 60px; height: 60px; border: 6px solid #fff; }
+  #flash { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: #fff; opacity: 0; }
+  #inp { position: absolute; left: 30px; top: 630px; width: 504px; min-height: 150px; border-radius: 34px; border: 3px solid #c9d3f0; padding: 26px 28px; font-size: 34px; line-height: 1.32; color: var(--ink); }
+  #inp .cur { display: inline-block; width: 4px; height: 38px; background: var(--navy); vertical-align: -6px; margin-left: 2px; }
+
+  .ex { position: absolute; left: 260px; top: 180px; width: 1400px; height: 720px; border-radius: 64px; overflow: hidden; background-image: radial-gradient(#13221f12 1.6px, transparent 2.2px); background-size: 30px 30px; box-shadow: 0 40px 90px #13221f1f; }
+  .ex .tt { display: none; }
+  .ex svg { position: absolute; left: 250px; top: 55px; }
+
+  .mail { position: absolute; left: 510px; top: 150px; width: 900px; padding: 60px 70px 64px; background: #fff; border-radius: 52px; box-shadow: 0 50px 110px #13221f2e; }
+  .mail h3 { font-family: Georgia, serif; font-weight: 400; font-size: 76px; letter-spacing: -.03em; padding-bottom: 30px; margin-bottom: 26px; border-bottom: 4px dashed #c9d3f0; }
+  .mail .r { display: flex; font-size: 40px; margin: 18px 0; } .mail .r span { width: 210px; color: var(--muted); }
+  .mail .ln { height: 16px; border-radius: 8px; background: var(--stone); margin-top: 18px; }
+  .mail .att { display: flex; align-items: center; gap: 22px; margin-top: 30px; height: 96px; font-size: 32px; color: var(--muted); }
+  .mail .att i { display: block; width: 130px; height: 90px; border-radius: 16px; background: url(assets/buca.jpg) center/cover; }
+  .mail .btn { display: inline-block; margin-top: 34px; background: var(--navy); color: #fff; font-size: 40px; padding: 24px 46px; border-radius: 99px; }
+  .cpw { position: absolute; left: 0; right: 0; bottom: 46px; display: flex; justify-content: center; pointer-events: none; }
+  .cp { background: var(--green); color: #fff; font-family: 'IN', sans-serif; font-weight: 600; font-size: 44px; line-height: 1.2; letter-spacing: -.01em; padding: 13px 34px 15px; border-radius: 999px; white-space: nowrap; box-shadow: 0 10px 30px #13221f33; }
+  .rep { width: 130px; height: 130px; border-radius: 50%; background: #fff; box-shadow: 0 16px 36px #13221f26; display: flex; align-items: center; justify-content: center; }
+  .chip { position: absolute; padding: 22px 40px; border-radius: 99px; background: #fff; box-shadow: 0 20px 50px #13221f26; font-size: 50px; white-space: nowrap; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="79.2" data-fps="30" data-width="1920" data-height="1080">
+  <audio id="mix" src="assets/audio.mp3" data-start="0" data-duration="79.2" data-track-index="20" data-volume="1"></audio>
+
+  <div id="stage" class="full clip" data-start="0" data-duration="79.2" data-track-index="0" data-layout-allow-overlap="true">
+    <div id="dots" class="full"></div>
+
+    <!-- S1 folla e mezzo milione -->
+    <div id="sc1" class="sc">
+      <div id="crowd" class="full"></div>
+      <div class="abs" id="plate" style="left:460px;top:300px;width:1000px;height:480px;border-radius:70px;background:var(--bg);box-shadow:0 0 60px 50px var(--bg)"></div>
+      <div id="n1" class="abs roll serif c" style="top:330px;font-size:300px;line-height:300px"></div>
+      <div id="pers" class="abs serif c" style="top:650px;font-size:88px;color:#3c4a46">persone</div>
+    </div>
+
+    <!-- S2 il sito -->
+    <div id="sc2" class="sc">
+      <div id="win" class="abs">
+        <div class="top"><span class="dot" style="left:60px"></span><span class="dot" style="left:104px"></span><span class="dot" style="left:148px"></span><div class="addr"></div></div>
+        <div class="body"><div class="t serif"><span class="k">dove</span><span class="k">vanno</span><span class="k">inostri</span><span class="k">soldi</span><span class="k" style="color:var(--clay)">.com</span></div></div>
+      </div>
+    </div>
+
+    <!-- S3 spesa pubblica -->
+    <div id="sc3" class="sc">
+      <div class="abs" id="ground" style="left:160px;top:930px;width:1600px;height:14px;border-radius:7px;background:#e1d7c2"></div>
+      <div id="sheets" class="full"></div>
+      <svg id="lens" class="abs" style="left:300px;top:300px" width="360" height="360" viewBox="0 0 360 360"><circle cx="150" cy="150" r="120" fill="#ffffff55" stroke="#13221f" stroke-width="16"/><path d="M95 105a70 70 0 0 1 60-40" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round"/><path d="M238 238 L330 330" stroke="#13221f" stroke-width="30" stroke-linecap="round"/></svg>
+    </div>
+
+    <!-- S4 110 dataset -->
+    <div id="sc4" class="sc">
+      <div id="n4" class="abs roll serif" style="left:150px;top:300px;width:720px;font-size:330px;line-height:330px"></div>
+      <div id="t4" class="abs serif" style="left:150px;top:660px;width:720px;text-align:center;font-size:120px">dataset</div>
+      <div id="grid4" class="abs" style="left:1050px;top:300px;width:720px;height:660px"></div>
+      <div id="ic4" class="abs" style="left:1050px;top:150px;width:720px;height:120px"></div>
+    </div>
+
+    <!-- S5/S6 Italia Aperta, virale, Pino -->
+    <div id="sc5" class="sc">
+      <div id="bubs" class="full"></div>
+      <div id="iam" class="abs" style="left:300px;top:330px;width:330px;height:330px"></div>
+      <div id="iaw" class="abs serif" style="left:690px;top:370px;font-size:170px">Italia Aperta</div>
+      <div id="iau" class="abs" style="left:700px;top:580px;font-size:70px;color:var(--green);font-weight:600;letter-spacing:-.02em">italiaaperta.it</div>
+      <div id="pino" class="abs" style="left:700px;top:380px;padding:46px 70px;background:#fff;border-radius:60px 60px 60px 14px;box-shadow:0 30px 70px #13221f22">
+        <span class="serif" style="font-size:120px">Ciao, sono Pino.</span></div>
+    </div>
+
+    <!-- S7 pagine, enti, orientarsi -->
+    <div id="sc7" class="sc">
+      <div id="L7" class="full">
+        <div id="stack7" class="abs" style="left:250px;top:430px;width:400px;height:500px"></div>
+        <div id="n7a" class="abs roll serif" style="left:110px;top:150px;width:700px;font-size:200px;line-height:200px"></div>
+        <div id="t7a" class="abs serif" style="left:110px;top:360px;width:700px;text-align:center;font-size:90px">pagine</div>
+        <div id="grid7" class="abs" style="left:1020px;top:465px;width:760px;height:560px"></div>
+        <div id="n7b" class="abs roll serif" style="left:1050px;top:150px;width:700px;font-size:200px;line-height:200px"></div>
+        <div id="t7b" class="abs serif" style="left:1050px;top:360px;width:700px;text-align:center;font-size:90px">enti</div>
+      </div>
+      <div id="post" class="full">
+        <div class="abs" style="left:944px;top:250px;width:32px;height:900px;border-radius:16px;background:#8a958f"></div>
+        <div id="postm" class="abs" style="left:880px;top:120px;width:160px;height:160px"></div>
+        <div id="bd1" class="board abs serif" style="left:976px;top:310px;background:var(--navy)">Anagrafe</div>
+        <div id="bd2" class="board l abs serif" style="right:944px;top:510px;background:var(--green)">Salute</div>
+        <div id="bd3" class="board abs serif" style="left:976px;top:710px;background:var(--clay)">Tributi</div>
+      </div>
+    </div>
+
+    <!-- S8 cittadini e PA -->
+    <div id="sc8" class="sc">
+      <div id="ok8" class="abs" style="left:824px;top:440px;width:112px;height:112px;border-radius:50%;background:var(--green);box-shadow:0 14px 30px #13221f33"><svg width="112" height="112" viewBox="0 0 112 112"><path d="M34 58l16 16 30-34" fill="none" stroke="#fff" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <svg id="sv8" class="abs" style="left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+    </div>
+
+    <!-- S9 un passo in più -->
+    <div id="sc9" class="sc">
+      <div id="pm9" class="abs" style="left:810px;top:390px;width:300px;height:300px"></div>
+      <div id="steps9" class="full"></div>
+      <div id="bub9" class="abs" style="left:700px;top:330px;width:520px;height:320px;background:#fff;border-radius:64px 64px 64px 16px;box-shadow:0 30px 70px #13221f22"><div class="abs" style="left:60px;top:80px;width:400px;height:24px;border-radius:12px;background:#dde2dc"></div><div class="abs" style="left:60px;top:148px;width:330px;height:24px;border-radius:12px;background:#dde2dc"></div><div class="abs" style="left:60px;top:216px;width:240px;height:24px;border-radius:12px;background:#dde2dc"></div></div>
+      <div id="act9" class="abs" style="left:700px;top:330px;width:520px;height:320px;background:var(--navy);border-radius:64px;box-shadow:0 30px 70px #283b8455"><svg class="abs" style="left:150px;top:60px" width="220" height="200" viewBox="0 0 24 22"><path d="M2 10 L22 2 L15 20 L11 13 Z" fill="#fff"/><path d="M11 13 L22 2" stroke="#283b84" stroke-width="1.2"/></svg><div class="abs" style="left:380px;top:200px;width:90px;height:90px;border-radius:50%;background:var(--sun)"><svg width="90" height="90" viewBox="0 0 90 90"><path d="M26 46l13 13 26-28" fill="none" stroke="#283b84" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+    </div>
+
+    <!-- S10 nasce SuperPino -->
+    <div id="sc10" class="sc">
+      <svg id="rays" class="abs" style="left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+      <div id="pg10" class="abs" style="left:810px;top:330px;width:300px;height:300px"></div>
+      <div id="sp10" class="abs" style="left:810px;top:330px;width:300px;height:300px"></div>
+      <div id="t10" class="abs" style="left:0;top:700px;width:1920px;text-align:center;font-size:180px;font-weight:600;color:var(--navy);letter-spacing:-.04em">SuperPino</div>
+    </div>
+
+    <!-- S11 Comune, buca, foto, frase -->
+    <div id="sc11" class="sc">
+      <div id="c11" class="full">
+        <div class="rep abs" style="left:150px;top:260px"><svg width="70" height="70" viewBox="0 0 60 60"><path d="M30 56C18 42 14 34 14 26a16 16 0 0 1 32 0c0 8-4 16-16 30z" fill="#c0583e"/><circle cx="30" cy="25" r="6" fill="#fff"/></svg></div><div class="rep abs" style="left:220px;top:520px"><svg width="70" height="70" viewBox="0 0 60 60"><path d="M30 8a16 16 0 0 0-9 29v7h18v-7a16 16 0 0 0-9-29z" fill="#283b84"/><rect x="22" y="47" width="16" height="6" rx="3" fill="#283b84"/></svg></div><div class="rep abs" style="left:130px;top:780px"><svg width="70" height="70" viewBox="0 0 60 60"><path d="M30 8 L54 50 L6 50 Z" fill="#fff" stroke="#c0583e" stroke-width="6" stroke-linejoin="round"/></svg></div>
+        <svg id="mun11" class="abs" style="left:650px;top:200px" width="620" height="760" viewBox="-80 -140 520 640"></svg>
+      </div>
+      <div id="road11" class="full">
+        <svg class="abs" style="left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080" id="sv11"></svg>
+      </div>
+      <div id="phone" class="abs"><div class="scr">
+        <div class="hd"><span id="spm11" style="width:56px;height:56px;display:inline-block"></span>SuperPino</div>
+        <div id="cam"><i class="cn" style="left:26px;top:26px;border-right:0;border-bottom:0;border-radius:14px 0 0 0"></i><i class="cn" style="right:26px;top:26px;border-left:0;border-bottom:0;border-radius:0 14px 0 0"></i><i class="cn" style="left:26px;bottom:26px;border-right:0;border-top:0;border-radius:0 0 0 14px"></i><i class="cn" style="right:26px;bottom:26px;border-left:0;border-top:0;border-radius:0 0 14px 0"></i></div>
+        <div id="inp"><span id="typed"></span><span class="cur"></span></div>
+        <div id="flash"></div>
+      </div></div>
+    </div>
+
+    <!-- S12 esempi -->
+    <div id="sc12" class="sc">
+      <div id="ex1" class="ex" style="background-color:#e8ebe4"><div class="tt serif">Una buca in strada</div><svg width="900" height="610" viewBox="0 0 280 190"></svg></div>
+      <div id="ex2" class="ex" style="background-color:#e1e6f3"><div class="tt serif">Un lampione spento</div><svg width="900" height="610" viewBox="0 0 280 190"></svg></div>
+      <div id="ex3" class="ex" style="background-color:#efe4d6"><div class="tt serif">Un cartello piegato</div><svg width="900" height="610" viewBox="0 0 280 190"></svg></div>
+      <svg id="quart" class="abs" style="left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+    </div>
+
+    <!-- S13 mappa, Comune, contatto, mail -->
+    <div id="sc13" class="sc">
+      <div id="map13" class="full"><svg id="sv13" width="1920" height="1080" viewBox="0 0 1920 1080"></svg></div>
+      <div id="spb13" class="abs" style="left:70px;top:60px;display:flex;align-items:center;gap:18px;padding:16px 34px 16px 18px;background:#fff;border-radius:99px;box-shadow:0 14px 34px #13221f22;font-size:42px;font-weight:600;color:var(--navy)"><span id="spm13" style="width:64px;height:64px;display:inline-block"></span>SuperPino</div>
+      <div id="com13" class="chip serif" style="left:1080px;top:250px;font-size:74px;padding:30px 50px">Comune di Cremona</div>
+      <div id="ct13" class="chip" style="left:1080px;top:420px;color:var(--green);font-weight:600">✓ Contatto trovato</div>
+      <div id="mail" class="mail">
+        <h3>La tua segnalazione</h3>
+        <div class="r"><span>A</span>Comune di Cremona</div>
+        <div class="r"><span>Oggetto</span>Buca profonda in via Roma 12</div>
+        <div class="ln" style="width:92%"></div><div class="ln" style="width:70%"></div>
+        <div class="att"><i id="att"></i><span id="attl">foto allegata</span></div>
+        <div class="btn" id="btn13">Invia al Comune</div>
+      </div>
+      <svg id="env13" class="abs" style="left:860px;top:400px" width="200" height="140" viewBox="-110 -75 220 150"><rect x="-100" y="-66" width="200" height="132" rx="16" fill="#fff" stroke="#283b84" stroke-width="7"/><path d="M-94 -58 L0 12 L94 -58" fill="none" stroke="#283b84" stroke-width="7" stroke-linejoin="round"/></svg>
+    </div>
+
+    <!-- S14 dati, servizi, il passo successivo -->
+    <div id="sc14" class="sc">
+      <div id="cd1" class="card" style="left:200px;top:200px;width:700px;height:680px"><div id="il14a" class="abs" style="left:50px;top:150px;width:600px;height:400px"></div></div>
+      <div id="cd2" class="card" style="left:1020px;top:200px;width:700px;height:680px"><div id="il14b" class="abs" style="left:50px;top:150px;width:600px;height:400px"></div></div>
+            <svg id="walk" class="abs" style="left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+    </div>
+
+    <!-- sottotitoli del parlato, sopra tutte le scene: aggiunti dallo script -->
+    <!-- S15 chiusa -->
+    <div id="sc15" class="sc">
+      <div id="spm15" class="abs" style="left:830px;top:190px;width:260px;height:260px"></div>
+      <div id="t15" class="abs" style="left:0;top:480px;width:1920px;text-align:center;font-size:190px;font-weight:600;color:var(--navy);letter-spacing:-.045em">SuperPino</div>
+      <div id="u15" class="abs serif c" style="top:740px;font-size:96px;color:var(--green)">italiaaperta.it</div>
+    </div>
+    <div id="caps" class="full"></div>
+  </div>
+
+  <script>
+    var seed = 9, r = function () { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+    var S = function (i) { return W[i][0]; }, E = function (i) { return W[i][1]; }, DUR = 79.2;
+    var pal = ['#17483c', '#283b84', '#c0583e', '#b38a2e', '#1f6b50', '#3a55a4', '#a3523b', '#8fb8a2', '#9fb0e0', '#d9c08a'];
+    var IA = function (s) { return '<svg width="' + s + '" height="' + s + '" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#17483c"/><path d="M10.5 23.5V15a5.5 5.5 0 0 1 11 0v8.5z" fill="#fff" fill-opacity=".14"/><path d="M10.5 23.5 14.8 22.2V13.2L10.5 15z" fill="#fff"/><path d="M10.5 23.5V15a5.5 5.5 0 0 1 11 0v8.5M8 23.5h16" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'; };
+    var SP = function (s) { return '<svg width="' + s + '" height="' + s + '" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#283b84"/><path d="M10 24V15a6 6 0 0 1 12 0v9M7.5 24h17" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 10.5l4.5-4.5M21 6h3.5v3.5" fill="none" stroke="#f0ce6a" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>'; };
+    var MUN = '<g><rect x="-30" y="140" width="380" height="330" fill="#fff"/><path d="M-60 150 L160 20 L380 150 Z" fill="#17483c"/><rect x="10" y="200" width="60" height="110" rx="30" fill="#dfe9e2"/><rect x="250" y="200" width="60" height="110" rx="30" fill="#dfe9e2"/><path d="M100 470 V330 a60 60 0 0 1 120 0 V470z" fill="#17483c"/><path d="M160 20 V-80" stroke="#13221f" stroke-width="6"/><g class="flag"><rect x="160" y="-80" width="36" height="60" fill="#1f6b50"/><rect x="196" y="-80" width="36" height="60" fill="#fff" stroke="#dde2dc"/><rect x="232" y="-80" width="36" height="60" fill="#c0583e"/></g><rect x="-60" y="470" width="440" height="16" rx="4" fill="#d9cdb3"/></g>';
+    var OMINO = function (c) { return '<circle cy="-14" r="11" fill="' + c + '"/><path d="M-17 20v-8a17 17 0 0 1 34 0v8z" fill="' + c + '"/>'; };
+    function roll(el, txt, h, plus) {
+      txt.split('').forEach(function (ch) {
+        if (!/[0-9]/.test(ch)) { var s = document.createElement('span'); s.style.height = h + 'px'; s.textContent = ch; el.appendChild(s); return; }
+        var col = document.createElement('div'); col.className = 'col'; col.style.height = h + 'px';
+        var seq = ''; for (var k = 0; k < 2; k++) for (var d = 0; d < 10; d++) seq += '<span style="display:block;height:' + h + 'px">' + d + '</span>';
+        col.innerHTML = '<div class="strip">' + seq + '<span style="display:block;height:' + h + 'px">' + ch + '</span></div>'; el.appendChild(col);
+      });
+      if (plus) { var p = document.createElement('span'); p.className = 'plus'; p.textContent = '+'; el.appendChild(p); }
+    }
+    (function build() {
+      roll(document.getElementById('n1'), '500.000', 300, true);
+      roll(document.getElementById('n4'), '110', 330, false);
+      roll(document.getElementById('n7a'), '1.000', 200, true);
+      roll(document.getElementById('n7b'), '214', 200, false);
+      // folla
+      var s = '<svg width="1920" height="1080" viewBox="0 0 1920 1080">';
+      for (var y = 0; y < 15; y++) for (var x = 0; x < 31; x++) {
+        var cx = 30 + x * 62 + (y % 2) * 31, cy = 50 + y * 70, c = pal[Math.floor(r() * pal.length)], sc = .85 + r() * .35;
+        s += '<g class="om" data-d="' + Math.hypot(cx - 960, cy - 540).toFixed(0) + '" transform="translate(' + cx + ' ' + cy + ')"><g class="in"><g transform="scale(' + sc.toFixed(2) + ')">' + OMINO(c) + '</g></g></g>';
+      }
+      document.getElementById('crowd').innerHTML = s + '</svg>';
+      // fogli → pile
+      var heights = [3, 5, 2, 6, 4, 7], cols = ['#17483c', '#283b84', '#c0583e', '#b38a2e', '#1f6b50', '#3a55a4'], h = '';
+      heights.forEach(function (n, ci) { for (var j = 0; j < n; j++) {
+        h += '<div class="sheet" data-gx="' + (300 + ci * 230) + '" data-gy="' + (740 - j * 46) + '" data-c="' + cols[ci] + '" style="left:' + (r() * 1700 + 20).toFixed(0) + 'px;top:' + (-260 + r() * 800).toFixed(0) + 'px;transform:rotate(' + ((r() - .5) * 140).toFixed(0) + 'deg)"><i style="top:34px;width:96px"></i><i style="top:62px;width:106px"></i><i style="top:90px;width:70px"></i></div>'; } });
+      document.getElementById('sheets').innerHTML = h;
+      // 110 cartelle
+      var g = ''; for (var i = 0; i < 110; i++) { var cx2 = i % 11, cy2 = Math.floor(i / 11); g += '<div class="tile" data-col="' + cx2 + '" style="left:' + (cx2 * 66) + 'px;top:' + (cy2 * 66) + 'px"></div>'; }
+      document.getElementById('grid4').innerHTML = g;
+      document.getElementById('ic4').innerHTML =
+        '<svg class="ic" style="position:absolute;left:96px;top:0" width="120" height="120" viewBox="0 0 60 60"><ellipse cx="30" cy="44" rx="20" ry="7" fill="#17483c"/><rect x="10" y="30" width="40" height="14" fill="#17483c"/><ellipse cx="30" cy="30" rx="20" ry="7" fill="#1f6b50"/><rect x="10" y="18" width="40" height="12" fill="#1f6b50"/><ellipse cx="30" cy="18" rx="20" ry="7" fill="#8fb8a2"/></svg>' +
+        '<svg class="ic" style="position:absolute;left:330px;top:0" width="120" height="120" viewBox="0 0 60 60"><rect x="12" y="6" width="34" height="46" rx="5" fill="#fff" stroke="#283b84" stroke-width="3"/><path d="M19 18h20M19 26h20M19 34h12" stroke="#9fb0e0" stroke-width="3" stroke-linecap="round"/><circle cx="42" cy="44" r="10" fill="#283b84"/><path d="M38 44l3 3 5-6" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>' +
+        '<svg class="ic" style="position:absolute;left:560px;top:0" width="120" height="120" viewBox="0 0 60 60"><path d="M30 56C18 42 14 34 14 26a16 16 0 0 1 32 0c0 8-4 16-16 30z" fill="#c0583e"/><circle cx="30" cy="25" r="6" fill="#fff"/></svg>';
+      // bolle virali
+      var icons = ['<svg width="50" height="50" viewBox="0 0 24 24"><path d="M12 21s-8-5.3-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.7-8 11-8 11z" fill="#fff"/></svg>',
+                   '<svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7h16v-7M12 3v12M7 8l5-5 5 5"/></svg>',
+                   '<svg width="50" height="50" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z" fill="#fff"/></svg>'];
+      var bc = ['#c0583e', '#283b84', '#17483c'], b = '';
+      for (var j = 0; j < 34; j++) {
+        var band = j % 4, bx = band < 2 ? 80 + r() * 1700 : (band === 2 ? 40 + r() * 180 : 1700 + r() * 160), by = band === 0 ? 40 + r() * 200 : (band === 1 ? 760 + r() * 220 : 280 + r() * 420), k = j % 3;
+        b += '<div class="bub" style="left:' + bx.toFixed(0) + 'px;top:' + by.toFixed(0) + 'px;background:' + bc[k] + ';transform:scale(' + (.6 + r() * .6).toFixed(2) + ')">' + icons[k] + '</div>';
+      }
+      document.getElementById('bubs').innerHTML = b;
+      document.getElementById('iam').innerHTML = IA(330);
+      // pagine e municipi
+      var st = ''; for (var p = 0; p < 12; p++) st += '<div class="sheet pg" style="left:' + (120 + p * 3) + 'px;top:' + (330 - p * 14) + 'px"><i style="top:34px;width:96px"></i><i style="top:62px;width:106px"></i><i style="top:90px;width:70px"></i></div>';
+      document.getElementById('stack7').innerHTML = st;
+      var mg = ''; for (var m = 0; m < 214; m++) { var mx = (m % 18) * 42, my = Math.floor(m / 18) * 42, mc = pal[m % 4];
+        mg += '<svg class="mun" style="left:' + mx + 'px;top:' + my + 'px" viewBox="0 0 40 40"><path d="M3 15 L20 4 L37 15 Z" fill="' + mc + '"/><rect x="6" y="15" width="28" height="21" fill="#fff" stroke="#dde2dc"/><path d="M16 36v-8a4 4 0 0 1 8 0v8z" fill="' + mc + '"/></svg>'; }
+      document.getElementById('grid7').innerHTML = mg;
+      document.getElementById('postm').innerHTML = IA(160);
+      // cittadino e Comune, linea aggrovigliata e linea dritta
+      document.getElementById('sv8').innerHTML =
+        '<g transform="translate(380 760) scale(7)"><g id="cit">' + OMINO('#283b84') + '</g></g>' +
+        '<g transform="translate(1330 470) scale(.95)"><g id="pa">' + MUN + '</g></g>' +
+        '<path id="tang" d="M470 700 C560 520 640 860 700 640 S820 420 860 700 S960 900 1000 620 S1120 460 1080 720 S1200 820 1260 640" fill="none" stroke="#c0583e" stroke-width="10" stroke-linecap="round"/>' +
+        '<path id="strt" d="M480 640 C700 470 1050 470 1280 600" fill="none" stroke="#17483c" stroke-width="10" stroke-linecap="round"/>';
+      document.getElementById('pm9').innerHTML = IA(300);
+      var fs = ''; [0, 1, 2].forEach(function (i) { fs += '<svg class="fp" style="position:absolute;left:' + (760 + i * 150) + 'px;top:' + (i % 2 ? 760 : 720) + 'px" width="50" height="80" viewBox="0 0 20 32"><ellipse cx="10" cy="11" rx="7" ry="10" fill="#c9cfc9"/><ellipse cx="10" cy="27" rx="5" ry="4.5" fill="#c9cfc9"/></svg>'; });
+      document.getElementById('steps9').innerHTML = fs;
+      document.getElementById('pg10').innerHTML = IA(300);
+      document.getElementById('sp10').innerHTML = SP(300);
+      var ry = ''; for (var q = 0; q < 16; q++) { var an = q / 16 * Math.PI * 2; ry += '<line class="ray" x1="' + (960 + Math.cos(an) * 220) + '" y1="' + (480 + Math.sin(an) * 220) + '" x2="' + (960 + Math.cos(an) * 330) + '" y2="' + (480 + Math.sin(an) * 330) + '" stroke="' + ['#f0ce6a', '#283b84', '#c0583e', '#17483c'][q % 4] + '" stroke-width="14" stroke-linecap="round"/>'; }
+      document.getElementById('rays').innerHTML = ry;
+      document.getElementById('mun11').innerHTML = MUN;
+      document.getElementById('spm11').innerHTML = SP(56);
+      document.getElementById('sv11').innerHTML =
+        '<ellipse cx="760" cy="1000" rx="760" ry="14" fill="#13221f" fill-opacity=".07"/><path d="M60 1010 L560 300 L840 300 L1100 1010 Z" fill="#cdd2cc"/>' +
+        '<path d="M700 320 L703 390 M709 450 L715 540 M724 610 L734 720 M748 800 L760 930" stroke="#fff" stroke-width="12" stroke-linecap="round"/>' +
+        '<g id="hole"><ellipse cx="520" cy="760" rx="170" ry="58" fill="#7b827e"/><ellipse cx="520" cy="768" rx="118" ry="36" fill="#3f4643"/><path d="M360 740l-44-16M680 738l50-18M506 702l-6-44" stroke="#7b827e" stroke-width="8" stroke-linecap="round"/></g>' +
+        '<g id="cone"><path d="M910 960 L955 760 L1000 960 Z" fill="#c0583e"/><path d="M928 880h54M940 820h30" stroke="#fff" stroke-width="18"/><rect x="878" y="952" width="154" height="24" rx="6" fill="#17483c"/></g>' +
+        '<g transform="translate(520 560)"><g id="pin11"><path d="M0 130 C-64 56 -64 4 -64 -8 a64 64 0 0 1 128 0 c0 12 0 64 -64 138z" fill="#c0583e"/><circle cy="-8" r="24" fill="#fff"/></g></g>';
+      // illustrazioni degli esempi
+      var exs = document.querySelectorAll('.ex svg');
+      exs[0].innerHTML = '<ellipse cx="150" cy="176" rx="110" ry="6" fill="#13221f" fill-opacity=".07"/><path d="M70 172 L130 40 L180 40 L240 172 Z" fill="#cdd2cc"/><path d="M155 48v18M156 84v22M158 124v28" stroke="#fff" stroke-width="5" stroke-linecap="round"/><ellipse cx="130" cy="130" rx="40" ry="13" fill="#7b827e"/><ellipse cx="130" cy="132" rx="27" ry="8" fill="#3f4643"/><path d="M196 166 L208 112 L220 166 Z" fill="#c0583e"/><path d="M200 146h16" stroke="#fff" stroke-width="5"/><rect x="190" y="163" width="36" height="7" rx="2" fill="#17483c"/>';
+      exs[1].innerHTML = '<line x1="40" y1="176" x2="250" y2="176" stroke="#c9cfd9" stroke-width="3"/><path d="M150 176V40a10 10 0 0 0-10-10H96" fill="none" stroke="#17483c" stroke-width="9"/><path d="M70 30h40l-6 14H76z" fill="#17483c"/><ellipse cx="90" cy="47" rx="14" ry="4" fill="#c9cfd9"/><path d="M90 52 L66 172 M90 52 L114 172" stroke="#9fa8bd" stroke-width="2" stroke-dasharray="5 6"/><path d="M48 30l10 6M44 46h12M48 60l10-5" stroke="#c0583e" stroke-width="4" stroke-linecap="round"/><circle cx="222" cy="44" r="20" fill="#e3cf8e"/><circle cx="216" cy="40" r="4" fill="#cdb46b"/><rect x="142" y="160" width="18" height="16" rx="3" fill="#17483c"/>';
+      exs[2].innerHTML = '<line x1="40" y1="178" x2="250" y2="178" stroke="#d9cdb3" stroke-width="3"/><g transform="rotate(14 150 176)"><rect x="144" y="70" width="12" height="108" rx="3" fill="#8a958f"/><path d="M150 18 L208 112 L92 112 Z" fill="#fff" stroke="#c0583e" stroke-width="12" stroke-linejoin="round"/><path d="M122 92c18-30 36-30 58 0" fill="none" stroke="#17483c" stroke-width="9" stroke-linecap="round"/></g><path d="M112 170c2-12 10-16 14-14M196 170c-2-12-10-16-14-14" stroke="#8fb8a2" stroke-width="4" fill="none" stroke-linecap="round"/>';
+      // quartiere con segnalini
+      var qs = '<rect x="120" y="880" width="1680" height="16" rx="8" fill="#d9cdb3"/>';
+      [[180, 520, '#e9d9b8', '#c0583e'], [520, 440, '#dfe9e2', '#17483c'], [860, 560, '#e1e6f3', '#283b84'], [1180, 470, '#efe4d6', '#b38a2e'], [1500, 540, '#dfe9e2', '#1f6b50']].forEach(function (q, i) {
+        var w = 300, top = q[1];
+        qs += '<g class="house"><rect x="' + q[0] + '" y="' + top + '" width="' + w + '" height="' + (880 - top) + '" fill="' + q[2] + '"/><path d="M' + (q[0] - 20) + ' ' + top + ' L' + (q[0] + w / 2) + ' ' + (top - 110) + ' L' + (q[0] + w + 20) + ' ' + top + ' Z" fill="' + q[3] + '"/>' +
+          '<rect x="' + (q[0] + 50) + '" y="' + (top + 60) + '" width="70" height="80" rx="10" fill="#fff"/><rect x="' + (q[0] + 180) + '" y="' + (top + 60) + '" width="70" height="80" rx="10" fill="#fff"/><rect x="' + (q[0] + 115) + '" y="' + (880 - 150) + '" width="70" height="150" rx="35" fill="' + q[3] + '"/></g>';
+      });
+      [[330, 300], [1010, 330], [1650, 320], [670, 250]].forEach(function (p) { qs += '<g transform="translate(' + p[0] + ' ' + p[1] + ')"><g class="qpin"><path d="M0 90 C-44 38 -44 4 -44 -6 a44 44 0 0 1 88 0 c0 10 0 44 -44 96z" fill="#c0583e"/><circle cy="-6" r="16" fill="#fff"/></g></g>'; });
+      document.getElementById('quart').innerHTML = qs;
+      // mappa
+      var mp = '<rect width="1920" height="1080" fill="#eceee6"/>';
+      for (var bx2 = -1; bx2 < 12; bx2++) for (var by2 = -1; by2 < 8; by2++) {
+        var x0 = bx2 * 180 + (by2 % 2) * 60, y0 = by2 * 150; mp += '<rect x="' + (x0 + 14) + '" y="' + (y0 + 14) + '" width="152" height="122" rx="14" fill="#f8f8f4"/>'; }
+      mp += '<path d="M-20 820 C 400 700, 700 980, 1100 860 S 1700 700, 1960 780" fill="none" stroke="#c9d3f0" stroke-width="70"/>';
+      mp += '<path d="M200 120 h260 v220 h-260z" fill="#cfe3d6" rx="30"/><circle cx="1650" cy="230" r="120" fill="#cfe3d6"/>';
+      mp += '<path id="bound" d="M560 210 L1010 150 L1330 330 L1290 680 L900 760 L520 600 Z" fill="#c0583e" fill-opacity=".06" stroke="#c0583e" stroke-width="8" stroke-dasharray="22 16" stroke-linejoin="round"/>';
+      mp += '<g id="rings"><circle class="rg" cx="900" cy="470" r="60" fill="none" stroke="#283b84" stroke-width="6"/><circle class="rg" cx="900" cy="470" r="60" fill="none" stroke="#283b84" stroke-width="6"/><circle class="rg" cx="900" cy="470" r="60" fill="none" stroke="#283b84" stroke-width="6"/></g>';
+      mp += '<g transform="translate(900 470)"><g id="you"><path d="M0 0 C-52 -52 -60 -96 -60 -110 a60 60 0 0 1 120 0 c0 14 -8 58 -60 110z" fill="#283b84"/><circle cy="-110" r="22" fill="#fff"/></g></g>';
+      document.getElementById('sv13').innerHTML = mp;
+      document.getElementById('spm13').innerHTML = SP(64);
+      // dati e servizi
+      document.getElementById('il14a').innerHTML = '<svg width="600" height="400" viewBox="0 0 240 160"><ellipse cx="120" cy="150" rx="90" ry="5" fill="#13221f" fill-opacity=".07"/><rect x="40" y="96" width="34" height="50" rx="6" fill="#8fb8a2"/><rect x="88" y="62" width="34" height="84" rx="6" fill="#1f6b50"/><rect x="136" y="30" width="34" height="116" rx="6" fill="#17483c"/><circle cx="196" cy="40" r="20" fill="#d9c08a"/><path d="M188 40h16M188 34h16M188 46h16" stroke="#b38a2e" stroke-width="3"/></svg>';
+      document.getElementById('il14b').innerHTML = '<svg width="600" height="400" viewBox="0 0 240 160"><ellipse cx="120" cy="150" rx="90" ry="5" fill="#13221f" fill-opacity=".07"/><rect x="30" y="30" width="130" height="48" rx="20" fill="#e3e7f1"/><path d="M50 50h80M50 62h50" stroke="#9fb0e0" stroke-width="5" stroke-linecap="round"/><rect x="80" y="90" width="130" height="48" rx="20" fill="#17483c"/><path d="M100 110h80M100 122h50" stroke="#8fb8a2" stroke-width="5" stroke-linecap="round"/><g transform="translate(14 96) scale(.9)"><circle cx="16" cy="16" r="16" fill="#17483c"/><path d="M10.5 23.5V15a5.5 5.5 0 0 1 11 0v8.5M8 23.5h16" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></g></svg>';
+      document.getElementById('walk').innerHTML = '<path d="M560 925 C 900 860, 1180 860, 1420 905" fill="none" stroke="#c9cfc9" stroke-width="10" stroke-dasharray="2 26" stroke-linecap="round"/><g transform="translate(1440 450) scale(.92)"><g id="mun14">' + MUN + '</g></g><g transform="translate(430 740) scale(9)"><g id="wk">' + OMINO('#283b84') + '<rect x="12" y="-2" width="9" height="15" rx="2" fill="#13221f"/></g></g>' +
+        [0, 1, 2, 3].map(function (i) { return '<g class="fp2" transform="translate(' + (680 + i * 150) + ' ' + (i % 2 ? 905 : 885) + ') rotate(80)"><ellipse cx="0" cy="0" rx="16" ry="26" fill="#c9cfc9"/></g>'; }).join('');
+      document.getElementById('spm15').innerHTML = SP(260);
+      document.getElementById('caps').innerHTML = CAP.map(function (c, i) { return '<div class="cpw" id="cp' + i + '"><span class="cp">' + c.t + '</span></div>'; }).join('');
+    })();
+
+    document.fonts.ready.then(function () {
+      var tl = gsap.timeline({ paused: true }), OUT = 'expo.out', BK = 'back.out(1.8)';
+      var scenes = ['sc1', 'sc2', 'sc3', 'sc4', 'sc5', 'sc7', 'sc8', 'sc9', 'sc10', 'sc11', 'sc12', 'sc13', 'sc14', 'sc15'];
+      scenes.forEach(function (s, i) { if (i) gsap.set('#' + s, { autoAlpha: 0 }); });
+      function up(outS, inS, t) {
+        tl.to('#' + outS, { y: -1080, duration: .4, ease: 'power3.in' }, t - .32);
+        tl.set('#' + outS, { autoAlpha: 0 }, t + .1);
+        tl.set('#' + inS, { autoAlpha: 1 }, t - .06);
+        tl.fromTo('#' + inS, { y: 1080 }, { y: 0, duration: .6, ease: 'power3.out' }, t - .06);
+      }
+      function rollTo(sel, t, dur, h) {
+        tl.fromTo(sel, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .3, ease: OUT }, t - .1);
+        gsap.utils.toArray(sel + ' .col').forEach(function (c, i) { tl.fromTo(c.querySelector('.strip'), { y: 0 }, { y: -20 * h, duration: dur + i * .06, ease: 'power3.inOut' }, t + i * .03); });
+      }
+      function word(sel, t) { tl.fromTo(sel, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: .45, ease: OUT }, t); }
+      function pop(sel, t, st) { tl.fromTo(sel, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: .45, ease: BK, stagger: st || 0 }, t); }
+
+      // S1 — «Oltre mezzo milione di persone»
+      gsap.utils.toArray('#crowd .om').forEach(function (g) {
+        tl.fromTo(g.querySelector('.in'), { scale: 0, transformOrigin: '50% 100%' }, { scale: 1, transformOrigin: '50% 100%', duration: .45, ease: 'back.out(2.2)' }, .05 + (+g.dataset.d) / 1100 * 1.3);
+      });
+      tl.fromTo('#plate', { scale: .6, opacity: 0 }, { scale: 1, opacity: 1, duration: .5, ease: OUT }, .35);
+      rollTo('#n1', .6, .72, 300);
+      tl.fromTo('#n1 .plus', { opacity: 0, scale: .3, rotation: -90 }, { opacity: 1, scale: 1, rotation: 0, duration: .5, ease: 'back.out(2.4)' }, 1.45);
+      word('#pers', S(4));
+      [2.0, 2.4].forEach(function (t) { tl.to('#crowd .in', { y: -16, duration: .12, ease: 'power2.out', yoyo: true, repeat: 1 }, t); });
+
+      // S2 — «hanno visto dovevannoinostrisoldi.com»
+      up('sc1', 'sc2', S(7) - .22);
+      var ks = gsap.utils.toArray('#win .k'), kt = [S(7), S(7) + .26, S(7) + .5, S(8) + .2, S(8) + .72];
+      ks.forEach(function (k, i) { tl.fromTo(k, { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: .28, ease: 'back.out(2)' }, kt[i]); });
+      tl.fromTo('#win .t', { scale: .96 }, { scale: 1.04, duration: 2.4, ease: 'none' }, S(7) - .02);
+      // «Siamo partiti da lì»: si entra nella pagina
+      tl.to('#win', { scale: 3.2, y: 300, transformOrigin: '50% 70%', duration: .8, ease: 'power3.in' }, S(9));
+      tl.set('#sc2', { autoAlpha: 0 }, S(9) + .64); tl.set('#sc3', { autoAlpha: 1 }, S(9) + .64);
+
+      // S3 — fogli in disordine, poi pile ordinate su «comprensibile»
+      var sh = gsap.utils.toArray('#sheets .sheet');
+      tl.fromTo('#sheets', { y: -500 }, { y: 0, duration: .9, ease: 'power2.out' }, S(9) + .64);
+      sh.forEach(function (el) {
+        tl.to(el, { rotation: '+=' + ((r() - .5) * 80).toFixed(0), duration: 1.2, ease: 'none' }, S(9) + .64);
+        tl.to(el, { x: +el.dataset.gx - parseFloat(el.style.left), y: +el.dataset.gy - parseFloat(el.style.top), rotation: 0, duration: .6, ease: 'power3.inOut' }, S(15) + r() * .18);
+        tl.to(el, { backgroundColor: el.dataset.c, duration: .25 }, S(15) + .5);
+      });
+      tl.to('#sheets .sheet i', { backgroundColor: '#ffffff40', duration: .25 }, S(15) + .5);
+      tl.fromTo('#ground', { scaleX: 0 }, { scaleX: 1, duration: .5, ease: OUT }, S(15) - .3);
+      tl.fromTo('#lens', { opacity: 0, x: -200, rotation: -12 }, { opacity: 1, x: 0, rotation: 0, duration: .45, ease: OUT }, S(15) + .55);
+      tl.to('#lens', { x: 980, y: -90, duration: 1.35, ease: 'sine.inOut' }, S(17) - .15);
+
+      // S4 — «Oggi il catalogo raccoglie 110 dataset»
+      up('sc3', 'sc4', S(19) - .11);
+      gsap.utils.toArray('#grid4 .tile').forEach(function (el, i) { tl.fromTo(el, { scale: 0 }, { scale: 1, duration: .35, ease: 'back.out(2.4)' }, S(19) + .2 + i * .009); });
+      rollTo('#n4', S(23) - .05, .62, 330);
+      word('#t4', S(24));
+      [[0, 3, '#17483c', S(26)], [4, 7, '#283b84', S(28)], [8, 10, '#c0583e', S(30)]].forEach(function (gr, gi) {
+        var els = gsap.utils.toArray('#grid4 .tile').filter(function (el) { var c = +el.dataset.col; return c >= gr[0] && c <= gr[1]; });
+        tl.to(els, { backgroundColor: gr[2], duration: .3, stagger: .004 }, gr[3]);
+        pop(document.querySelectorAll('#ic4 .ic')[gi], gr[3] + .05);
+      });
+
+      // S5 — «Poi abbiamo lanciato italiaaperta.it»
+      up('sc4', 'sc5', S(31) - .11);
+      gsap.set(['#pino', '#bubs .bub'], { opacity: 0 });
+      tl.fromTo('#iam', { scale: 0, rotation: -40 }, { scale: 1, rotation: 0, duration: .7, ease: 'back.out(1.6)' }, S(33));
+      tl.fromTo('#iaw', { opacity: 0, x: -60, clipPath: 'inset(0 100% 0 0)' }, { opacity: 1, x: 0, clipPath: 'inset(0 0% 0 0)', duration: .6, ease: OUT }, S(34));
+      word('#iau', S(34) + .45);
+      // «è diventato virale»
+      tl.to(['#iam', '#iaw', '#iau'], { y: -40, duration: 1.2, ease: 'sine.inOut' }, S(35));
+      gsap.utils.toArray('#bubs .bub').forEach(function (el, i) {
+        tl.fromTo(el, { opacity: 0, scale: 0 }, { opacity: 1, scale: '+=1', duration: .4, ease: 'back.out(2.6)' }, S(38) - .1 + (i % 17) * .04 + Math.floor(i / 17) * .3);
+        tl.to(el, { y: '-=' + (40 + r() * 60).toFixed(0), duration: 1.6, ease: 'sine.out' }, S(38) + .2);
+      });
+      // «vi abbiamo presentato Pino»
+      tl.to('#bubs .bub', { opacity: 0, scale: .2, duration: .3, ease: 'power2.in', stagger: .008 }, S(42) - .1);
+      tl.to(['#iaw', '#iau'], { opacity: 0, y: -80, duration: .3, ease: 'power2.in' }, S(42) - .1);
+      tl.to('#iam', { x: 0, y: 30, scale: .9, duration: .4, ease: 'power3.inOut' }, S(42) - .1);
+      tl.fromTo('#pino', { opacity: 0, scale: .4, transformOrigin: '0% 100%' }, { opacity: 1, scale: 1, duration: .5, ease: BK }, S(43));
+
+      // S7 — «oltre mille pagine ufficiali di 214 enti»
+      up('sc5', 'sc7', S(44) - .06);
+      gsap.set('#post', { autoAlpha: 0 });
+      gsap.utils.toArray('#stack7 .pg').forEach(function (el, i) { tl.fromTo(el, { y: -900, rotation: (r() - .5) * 60 }, { y: 0, rotation: (r() - .5) * 6, duration: .45, ease: 'power3.out' }, S(44) + i * .06); });
+      rollTo('#n7a', S(45) - .05, .6, 200);
+      tl.fromTo('#n7a .plus', { opacity: 0, scale: .3 }, { opacity: 1, scale: 1, duration: .4, ease: BK }, S(45) + .7);
+      word('#t7a', S(46));
+      gsap.utils.toArray('#grid7 .mun').forEach(function (el, i) { tl.fromTo(el, { scale: 0 }, { scale: 1, duration: .3, ease: 'back.out(2.4)' }, S(49) + i * .005); });
+      rollTo('#n7b', S(49) + .1, 1.0, 200);
+      word('#t7b', S(50));
+      // «organizzate per aiutarvi a orientarvi tra i servizi pubblici»: il cartello
+      tl.to('#L7', { y: -1080, duration: .45, ease: 'power3.in' }, S(51) - .2);
+      tl.set('#post', { autoAlpha: 1 }, S(51) + .2);
+      tl.fromTo('#post', { y: 1080 }, { y: 0, duration: .6, ease: 'power3.out' }, S(51) + .2);
+      pop('#postm', S(52));
+      [['#bd1', S(53), -1], ['#bd2', S(55) - .2, 1], ['#bd3', S(56), -1]].forEach(function (b) {
+        tl.fromTo(b[0], { rotation: b[2] * 30, opacity: 0, transformOrigin: b[2] < 0 ? '0% 50%' : '100% 50%' }, { rotation: 0, opacity: 1, duration: .7, ease: 'elastic.out(1, .5)' }, b[1]);
+      });
+
+      // S8 — «rendere più semplice il rapporto tra cittadini e PA»
+      up('sc7', 'sc8', S(60) - .17);
+      var tang = document.getElementById('tang'), strt = document.getElementById('strt'), LT = tang.getTotalLength(), LS = strt.getTotalLength();
+      gsap.set(tang, { strokeDasharray: LT, strokeDashoffset: LT }); gsap.set(strt, { strokeDasharray: LS, strokeDashoffset: LS });
+      tl.fromTo('#cit', { scale: 0, transformOrigin: '50% 100%' }, { scale: 1, duration: .5, ease: BK }, S(60) + .08);
+      tl.fromTo('#pa', { y: 300, opacity: 0 }, { y: 0, opacity: 1, duration: .6, ease: OUT }, S(60) + .28);
+      tl.to(tang, { strokeDashoffset: 0, duration: 1.8, ease: 'power1.inOut' }, S(64));
+      tl.to(tang, { strokeDashoffset: -LT, duration: .45, ease: 'power2.in' }, S(70) - .2);
+      tl.to(strt, { strokeDashoffset: 0, duration: .5, ease: 'power3.out' }, S(70) + .05);
+      pop('#ok8', S(70) + .3);
+      tl.to('#cit', { y: -40, duration: .15, yoyo: true, repeat: 1, ease: 'power2.out' }, S(74));
+      tl.to('#pa .flag', { scaleX: .7, transformOrigin: '0% 50%', duration: .15, yoyo: true, repeat: 3, ease: 'sine.inOut' }, S(76));
+
+      // S9 — «Oggi Pino fa un passo in più: passa dalle risposte alle azioni»
+      up('sc8', 'sc9', S(78) - .17);
+      gsap.set(['#bub9', '#act9'], { opacity: 0 });
+      pop('#pm9', S(78) - .02);
+      tl.to('#pm9', { keyframes: [{ scaleY: .8, scaleX: 1.1, duration: .12 }, { y: -140, x: 160, scaleY: 1.1, scaleX: .92, duration: .25, ease: 'power2.out' }, { y: 0, x: 300, scaleY: .85, scaleX: 1.12, duration: .22, ease: 'power2.in' }, { scaleY: 1, scaleX: 1, duration: .2, ease: 'back.out(3)' }] }, S(82) - .1);
+      gsap.utils.toArray('#steps9 .fp').forEach(function (el, i) { tl.fromTo(el, { opacity: 0, scale: .4 }, { opacity: 1, scale: 1, duration: .2 }, S(82) + .1 + i * .14); });
+      tl.to(['#pm9', '#steps9'], { opacity: 0, y: -60, duration: .3, ease: 'power2.in' }, S(85) - .1);
+      tl.fromTo('#bub9', { opacity: 0, scale: .5, transformOrigin: '0% 100%' }, { opacity: 1, scale: 1, duration: .45, ease: BK }, S(87) - .05);
+      tl.to('#bub9', { rotationY: 90, opacity: 0, duration: .22, ease: 'power2.in' }, S(89) - .2);
+      tl.fromTo('#act9', { opacity: 0, rotationY: -90 }, { opacity: 1, rotationY: 0, duration: .35, ease: 'back.out(1.6)' }, S(89) + .02);
+      tl.fromTo('#act9 svg', { x: -40, y: 30 }, { x: 30, y: -24, duration: .6, ease: 'power2.out' }, S(89) + .2);
+      // «Nasce»: si fa bianco, la musica tace
+      tl.to('#sc9', { opacity: 0, filter: 'blur(14px)', scale: 1.05, duration: .35, ease: 'power2.in' }, S(90) - .3);
+      tl.set('#sc10', { autoAlpha: 1 }, S(90) - .02);
+      gsap.set(['#sp10', '#t10', '#rays'], { opacity: 0 });
+      tl.fromTo('#pg10', { scale: 0 }, { scale: .8, duration: .3, ease: BK }, S(90));
+      tl.to('#pg10', { scale: .72, duration: .15, yoyo: true, repeat: 1 }, S(90) + .3);
+      // «SuperPino»: il segno diventa SuperPino
+      tl.to('#pg10', { scale: 0, rotation: 90, duration: .2, ease: 'power3.in' }, S(91) - .12);
+      tl.fromTo('#sp10', { opacity: 0, scale: 0, rotation: -90 }, { opacity: 1, scale: 1, rotation: 0, duration: .55, ease: 'back.out(2)' }, S(91) - .02);
+      tl.set('#rays', { opacity: 1 }, S(91));
+      gsap.utils.toArray('#rays .ray').forEach(function (l) { tl.fromTo(l, { opacity: 1, scale: .6, svgOrigin: '960 480' }, { opacity: 0, scale: 1.6, svgOrigin: '960 480', duration: .7, ease: 'power2.out' }, S(91)); });
+      word('#t10', S(92) - .1);
+
+      // S11 — «Partiamo dalle segnalazioni al Comune. Vedi una buca? Scatta una foto e scrivi una frase.»
+      up('sc10', 'sc11', S(93) - .07);
+      gsap.set('#road11', { autoAlpha: 0 });
+      gsap.utils.toArray('#c11 .rep').forEach(function (el, i) {
+        tl.fromTo(el, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: .4, ease: BK }, S(94) + i * .2);
+        tl.to(el, { x: 936 - 65 - parseFloat(el.style.left), y: 800 - 65 - parseFloat(el.style.top), scale: .25, opacity: 0, duration: .55, ease: 'power3.in' }, S(96) + i * .18);
+      });
+      tl.fromTo('#mun11', { y: 400, opacity: 0 }, { y: 0, opacity: 1, duration: .6, ease: OUT }, S(94));
+      tl.to('#mun11 .flag', { scaleX: .7, transformOrigin: '0% 50%', duration: .15, yoyo: true, repeat: 3 }, S(97));
+      tl.to('#c11', { x: -1920, duration: .45, ease: 'power3.in' }, S(98) - .35);
+      tl.set('#road11', { autoAlpha: 1 }, S(98) - .1);
+      tl.fromTo('#road11', { x: 1920 }, { x: 0, duration: .5, ease: 'power3.out' }, S(98) - .1);
+      tl.fromTo('#pin11', { y: -500, opacity: 0 }, { y: 0, opacity: 1, duration: .45, ease: 'bounce.out' }, S(100) - .1);
+      tl.to('#road11', { x: -260, duration: .6, ease: 'power3.inOut' }, S(101) - .2);
+      tl.fromTo('#phone', { y: 980 }, { y: 0, duration: .6, ease: 'power3.out' }, S(101) - .2);
+      gsap.set('#inp', { opacity: 0 });
+      tl.to('#flash', { opacity: 1, duration: .05 }, S(103));
+      tl.to('#flash', { opacity: 0, duration: .35 }, S(103) + .06);
+      tl.to('#cam .cn', { opacity: 0, duration: .1 }, S(103) + .05);
+      tl.to('#cam', { scale: .595, x: 204, y: 10, transformOrigin: '0 0', duration: .45, ease: 'power3.inOut' }, S(103) + .3);
+      tl.fromTo('#inp', { opacity: 0, y: 30 }, { opacity: 1, y: -140, duration: .35, ease: OUT }, S(104));
+      var phrase = "C'è una buca profonda in via Roma 12", typed = document.getElementById('typed');
+      var tw = { n: 0 };
+      tl.to(tw, { n: phrase.length, duration: 1.0, ease: 'none', onUpdate: function () { typed.textContent = phrase.slice(0, Math.round(tw.n)); } }, S(105));
+
+      // S12 — «Ma la buca è solo un esempio. Un lampione spento, un cartello piegato, un problema nel tuo quartiere»
+      up('sc11', 'sc12', S(108) - .07);
+      gsap.set(['#ex2', '#ex3'], { y: 1100 }); gsap.set('#quart', { autoAlpha: 0 });
+      tl.fromTo('#ex1', { scale: .9 }, { scale: 1, duration: 1.4, ease: 'none' }, S(108) - .02);
+      tl.to('#ex1', { scale: .9, opacity: .6, duration: .4 }, S(116) - .2);
+      tl.to('#ex2', { y: 0, duration: .55, ease: 'power3.out' }, S(116) - .25);
+      tl.to('#ex2', { scale: .92, duration: .4 }, S(119) - .2);
+      tl.to('#ex3', { y: 0, duration: .55, ease: 'power3.out' }, S(119) - .25);
+      tl.set('#ex1', { autoAlpha: 0 }, S(116) + .32); tl.set('#ex2', { autoAlpha: 0 }, S(119) + .32);
+      tl.to('#ex3', { y: -1200, duration: .5, ease: 'power3.in' }, S(122) - .2);
+      tl.set('#quart', { autoAlpha: 1 }, S(122) + .1);
+      tl.fromTo('#quart .house', { y: 700 }, { y: 0, duration: .55, ease: 'back.out(1.4)', stagger: .06 }, S(122) + .1);
+      gsap.utils.toArray('#quart .qpin').forEach(function (p, i) { tl.fromTo(p, { scale: 0, transformOrigin: '50% 100%' }, { scale: 1, transformOrigin: '50% 100%', duration: .4, ease: 'back.out(2.6)' }, S(126) - .31 + i * .4); });
+
+      // S13 — «SuperPino individua l'amministrazione... trova il contatto giusto e prepara la mail»
+      up('sc12', 'sc13', S(130) - .21);
+      gsap.set(['#com13', '#ct13', '#mail', '#env13'], { opacity: 0 });
+      pop('#spb13', S(130));
+      tl.fromTo('#you', { y: -600 }, { y: 0, duration: .5, ease: 'bounce.out' }, S(132));
+      var bound = document.getElementById('bound'), LB = bound.getTotalLength();
+      gsap.set(bound, { strokeDasharray: '22 16', opacity: 0 });
+      tl.fromTo(bound, { opacity: 0, scale: .6, svgOrigin: '900 470' }, { opacity: 1, scale: 1, svgOrigin: '900 470', duration: .6, ease: OUT }, S(133));
+      gsap.utils.toArray('#rings .rg').forEach(function (c, i) { tl.fromTo(c, { attr: { r: 40 }, opacity: .8 }, { attr: { r: 380 }, opacity: 0, duration: 1.4, ease: 'power2.out' }, S(138) - .2 + i * .35); });
+      pop('#com13', S(135));
+      pop('#ct13', S(143));
+      tl.to('#map13', { filter: 'blur(6px)', opacity: .55, duration: .4 }, S(146) - .2);
+      tl.to(['#com13', '#ct13'], { opacity: 0, duration: .25 }, S(146) - .2);
+      tl.fromTo('#mail', { opacity: 0, y: 120, scale: .92 }, { opacity: 1, y: 0, scale: 1, duration: .55, ease: OUT }, S(146) - .1);
+      gsap.set('#att', { scale: 0 }); gsap.set('#attl', { opacity: 0 });
+      tl.to('#att', { scale: 1, duration: .4, ease: 'back.out(2.6)' }, S(154));
+      tl.to('#attl', { opacity: 1, duration: .3 }, S(154) + .1);
+      tl.to('#btn13', { scale: .92, duration: .1, yoyo: true, repeat: 1 }, E(155) - .25);
+      tl.to('#mail', { scale: .18, opacity: 0, duration: .3, ease: 'power3.in' }, E(155) - .05);
+      tl.fromTo('#env13', { opacity: 0, scale: .4 }, { opacity: 1, scale: 1, duration: .2 }, E(155) + .1);
+      tl.to('#env13', { x: 900, y: -700, rotation: 20, duration: .55, ease: 'power3.in' }, E(155) + .25);
+
+      // S14 — «Prima i dati, poi le informazioni sui servizi. Ora iniziamo ad aiutarti a fare il passo successivo.»
+      up('sc13', 'sc14', S(156) - .17);
+      gsap.set(['#cd2', '#walk'], { opacity: 0 });
+      
+      tl.fromTo('#cd1', { opacity: 0, y: 80 }, { opacity: 1, y: 0, duration: .5, ease: OUT }, S(156) - .05);
+      tl.fromTo('#cd2', { opacity: 0, y: 80 }, { opacity: 1, y: 0, duration: .5, ease: OUT }, S(160));
+      tl.to('#cd1', { x: -1100, rotation: -8, duration: .5, ease: 'power3.in' }, S(164) - .1);
+      tl.to('#cd2', { x: 1100, rotation: 8, duration: .5, ease: 'power3.in' }, S(164) - .1);
+      tl.set('#walk', { opacity: 1 }, S(164) + .3);
+      tl.fromTo('#wk', { x: -90 }, { x: 0, duration: .9, ease: 'power2.out' }, S(164) + .3);
+      tl.to('#wk', { y: -2, duration: .15, yoyo: true, repeat: 5, ease: 'sine.inOut' }, S(164) + .3);
+      gsap.set('#walk .fp2', { opacity: 0 });
+      gsap.utils.toArray('#walk .fp2').forEach(function (el, i) { tl.to(el, { opacity: 1, duration: .15 }, S(171) + i * .16); });
+      tl.to('#wk', { x: 46, duration: 1.1, ease: 'power2.inOut' }, S(171) - .2);
+      tl.to('#wk', { y: -2, duration: .14, yoyo: true, repeat: 7, ease: 'sine.inOut' }, S(171) - .2);
+      tl.to('#mun14 .flag', { scaleX: .7, transformOrigin: '0% 50%', duration: .15, yoyo: true, repeat: 3 }, S(172));
+      
+
+      // S15 — «Questo è SuperPino. Provalo su italiaaperta.it»
+      up('sc14', 'sc15', S(173) - .12);
+      gsap.set(['#t15', '#u15'], { opacity: 0 });
+      tl.fromTo('#spm15', { scale: 0, rotation: -60 }, { scale: 1, rotation: 0, duration: .6, ease: 'back.out(2)' }, S(175) - .2);
+      word('#t15', S(175));
+      word('#u15', S(179));
+      tl.fromTo('#sc15', { scale: 1 }, { scale: 1.03, duration: DUR - S(173) - .5, ease: 'none' }, S(173) + .48);
+      tl.to('#stage', { opacity: 0, duration: .6, ease: 'power1.in' }, DUR - .65);
+
+      // sottotitoli: entrano con la prima parola del blocco, escono prima del successivo
+      CAP.forEach(function (c, i) {
+        tl.fromTo('#cp' + i, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .12, ease: 'power2.out' }, c.in);
+        tl.to('#cp' + i, { opacity: 0, duration: .08 }, c.out - .08);
+      });
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines['main'] = tl;
+      tl.seek(0);
+    });
+  </script>
+</div>
+</body>
+</html>
